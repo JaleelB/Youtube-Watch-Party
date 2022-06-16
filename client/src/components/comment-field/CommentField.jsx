@@ -4,26 +4,31 @@ import { usePartyRoomPropsContext } from '../../context/PartyRoomContext';
 import {CTAButton} from '../../components';
 import './CommentField.scss';
 import { Send } from '@mui/icons-material';
+// import io from 'socket.io-client';
+
+// const socket = io.connect('http://localhost:4000');
 
 const CommentField = () => {
 
     const partyRoomProps = usePartyRoomPropsContext();
     const { 
-        messages, setMessages,
-        userMessage, setUserMessage
+        // messages, setMessages,
+        userMessage, setUserMessage, socket
     } = partyRoomProps.partyRoomProps;
 
-    const inputRef = useRef(null);
+
+  const inputRef = useRef(null);
+
 
     const getUserInput = (e) => setUserMessage(e.target.value);
 
-    const addMessage = () => {
+    const emitMessage = () => {
+        
         if(userMessage !== ''){
-            setMessages([
-                ...messages, userMessage
-            ])
+            socket.emit('send_message', {message: userMessage});
         }
 
+        setUserMessage('');
         inputRef.current.value = "";
         
     };
@@ -45,7 +50,7 @@ const CommentField = () => {
                 <Box className="action-btn-wrapper">
                     <CTAButton 
                         component={<Send/>} 
-                        buttonFunction={addMessage}
+                        buttonFunction={emitMessage}
                     />
                 </Box>
                 

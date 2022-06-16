@@ -1,4 +1,7 @@
 import {useContext, useState, createContext} from 'react';
+import io from 'socket.io-client';
+
+const socket = io.connect('http://localhost:4000');
 
 const PartyRoomPropsContext = createContext();
 
@@ -16,7 +19,8 @@ export function PartyRoomPropsProvider({children}){
     const partyRoomProps = {
         showChat, setShowChat,
         messages, setMessages,
-        userMessage, setUserMessage
+        userMessage, setUserMessage,
+        socket
     };
 
     return (
