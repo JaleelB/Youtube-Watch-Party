@@ -1,0 +1,23 @@
+@import '../../mainStyles.scss';
+
+#video-player{
+    position: relative; 
+    width: 100%; min-height: calc(90% - 95px); //height of header + padding top & bottom + extra space for details
+   
+    @media screen and (max-width: 390px){ 
+        min-height: calc(85% - 95px); margin-bottom: 5px;
+    }
+
+    .video-container{
+        width: 100%; height: 100%; background-color: $color-grey1;
+        border-radius: $border-radius; 
+
+        display: flex; flex-direction: column;
+
+        &:not(:hover){
+            #progress-bar{
+                display: none;
+            }
+        }
+    }
+}

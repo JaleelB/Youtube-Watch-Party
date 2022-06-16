@@ -1,0 +1,25 @@
+@import '../../mainStyles.scss';
+
+#submit-link-body{
+    width: 100%; max-width: 400px;
+    height: 100%; max-height: 250px;
+    background-color: $color-grey1; border-radius: $border-radius;
+    
+    margin: auto auto; 
+
+    .submit-link-inner{
+        display: flex; flex-direction: column;
+        justify-content: space-between;
+        width: 90%; height: 90%; margin: auto;
+        padding: 10px;
+
+        .youtube-icon{
+            font-size: 3.5rem; margin-inline: auto; color: $primary-red;
+        }
+
+        .supplemental-message{ text-align: center; }
+
+        .cta-btn{ width: auto;  }
+
+    }
+}

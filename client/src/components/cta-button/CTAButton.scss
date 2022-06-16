@@ -1,0 +1,12 @@
+@import '../../mainStyles.scss';
+
+.cta-btn, .inverted{
+    width: 100px; min-height: 35px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: $border-radius; font-family: $ft-mono;
+    font-weight: 500; cursor: pointer;
+}
+
+.cta-btn{  background-color: $primary-red;  color: $primary-text-color; }
+
+.inverted{ background-color: transparent;  border: 2px solid $color-grey1;  color: $primary-red }

@@ -1,0 +1,26 @@
+@import '../../mainStyles.scss';
+
+#progress-bar{
+    position: relative; margin-top: auto; margin-inline: auto;
+    width: 95%; min-height: 35px; bottom: 1rem;
+    display: flex; align-items: center;
+    background-color: transparent; border-radius: 5px;
+    transition: $transition;
+
+        .icon{ cursor: pointer; }
+
+        .pause-icon{ min-width: 20px; min-height: 20px; font-size: 1.3rem;}
+
+        .video-actions{
+            min-width: 300px; width: 100%; 
+            display: flex; align-items: center; 
+            justify-content: space-between; gap: 10px;
+
+            .ui-video-seek-slider{
+                width: 100%;
+            }
+        }
+
+        .video-timestamp{ font-family: $ft-sans; font-size: $ft-sm; }
+
+}

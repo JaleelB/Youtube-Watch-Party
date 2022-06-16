@@ -1,0 +1,36 @@
+@import '../../mainStyles.scss';
+
+#header-bar{
+    position: relative; top:0; min-height: 45px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-inline: 15px; background-color: $color-grey4;
+    font-family: $ft-sans; border-bottom: 1px solid $color-grey1;
+    
+    .app-title{
+        font-weight: 500; font-size: clamp(12px, 5vw, 20px);
+    }
+
+    .host-details{
+        display: flex; align-items: center; 
+        padding: 5px 0; gap: 10px;
+
+        .profile-icon{ 
+            min-width: 20px; min-height: 20px; 
+            max-width: 30px; max-height: 30px;
+            border-radius: $border-radius;
+
+            @media screen and(max-width: 700px){ display: none; }
+        }
+
+        .host-name-title{
+
+            .host-name, .host-title{
+                font-size: clamp(10px, 3vw, 13px);
+            }
+
+            .host-name{ font-weight: 300; }
+            .host-title{ font-weight: 600; color: $primary-red; }
+        }
+    }
+    
+}
