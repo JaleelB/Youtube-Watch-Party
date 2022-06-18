@@ -1,15 +1,15 @@
 import { Box } from '@mui/material';
-import React, {useEffect, useCallback} from 'react';
+import React, {useState, useCallback} from 'react';
 import {CommentField, TabSwitch} from '../../components';
-import { usePartyRoomPropsContext } from '../../context/PartyRoomContext';
+import { useConversationContext } from '../../context/ConversationContext';
 import './MessageBody.scss';
 
 const MessageBody = () => {
 
-  const partyRoomProps = usePartyRoomPropsContext();
+  const props = useConversationContext();
   const { 
       showChat, messages, setMessages, socket
-   } = partyRoomProps.partyRoomProps;
+   } = props.conversationProps;
 
 
   //scrolls into view when latest message is sent
@@ -25,9 +25,19 @@ const MessageBody = () => {
     }
   };
 
+  const[isMessageSender, setIsMessageSender] = useState();
   // useEffect(()=>{
     socket.on("receive_message", (data) =>{
       addMessage(data.message)
+
+      // console.log(data)
+      setIsMessageSender(false);
+
+      if(data.isSender){
+        setIsMessageSender(true);
+      }else{
+        setIsMessageSender(false);
+      }
     })
 
   // },[socket]);
@@ -44,16 +54,17 @@ const MessageBody = () => {
       <ul className="messages-container">
           {
             messages.map((messageValue, index) => {
-
+              console.log(isMessageSender)
               //checks if the current message is the last one in the message array
               const lastMessage = messages.length - 1 === index;
               return (
                 <li 
                   key={index} 
-                  className="message"
+                  className={isMessageSender ? 'align-left' : ''}
                   ref={lastMessage ? setLastMessageRef : null}
                 >
-                  {messageValue}
+                  <p className="message">{messageValue}</p>
+                  {isMessageSender ? 'You' : ''}
                 </li>
               )
             })

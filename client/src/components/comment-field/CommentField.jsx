@@ -1,31 +1,35 @@
 import {Box} from '@mui/material';
 import React,{useRef} from 'react';
-import { usePartyRoomPropsContext } from '../../context/PartyRoomContext';
+import { useConversationContext } from '../../context/ConversationContext';
 import {CTAButton} from '../../components';
 import './CommentField.scss';
 import { Send } from '@mui/icons-material';
-// import io from 'socket.io-client';
 
-// const socket = io.connect('http://localhost:4000');
 
 const CommentField = () => {
 
-    const partyRoomProps = usePartyRoomPropsContext();
+    const props = useConversationContext();
     const { 
-        // messages, setMessages,
+        messages, setMessages,
         userMessage, setUserMessage, socket
-    } = partyRoomProps.partyRoomProps;
+    } = props.conversationProps;
 
 
-  const inputRef = useRef(null);
-
-
+    const inputRef = useRef(null);
     const getUserInput = (e) => setUserMessage(e.target.value);
 
     const emitMessage = () => {
         
+        //updates message list on senders screen to see message they sent
+        setMessages([
+            ...messages, userMessage
+        ]);
+        
         if(userMessage !== ''){
-            socket.emit('send_message', {message: userMessage});
+            socket.emit('send_message', {
+                message: userMessage,
+                isSender: true
+            });
         }
 
         setUserMessage('');

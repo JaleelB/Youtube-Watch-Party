@@ -7,6 +7,8 @@ export {default as VideoPlayer } from './video-player/VideoPlayer';
 export {default as InvertedInput } from './inverted-input/InvertedInput';
 export {default as SubmitLinkBody } from './link-submission/SubmitLinkBody'; 
 export {default as TabSwitch} from './tab-switch/TabSwitch';
+export {default as NameModal} from './name-modal/NameModal';
+
 
 
 

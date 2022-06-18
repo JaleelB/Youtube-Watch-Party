@@ -3,20 +3,20 @@ import io from 'socket.io-client';
 
 const socket = io.connect('http://localhost:4000');
 
-const PartyRoomPropsContext = createContext();
+const ConversationPropsContext = createContext();
 
-export function usePartyRoomPropsContext(){
-    return useContext(PartyRoomPropsContext)
+export function useConversationContext(){
+    return useContext(ConversationPropsContext)
 };
 
-export function PartyRoomPropsProvider({children}){
+export function ConversationPropsProvider({children}){
 
     const [showChat, setShowChat] = useState(true);
 
     const [ messages, setMessages ] = useState([]);
     const [ userMessage, setUserMessage ] = useState('');
 
-    const partyRoomProps = {
+    const conversationProps = {
         showChat, setShowChat,
         messages, setMessages,
         userMessage, setUserMessage,
@@ -24,8 +24,8 @@ export function PartyRoomPropsProvider({children}){
     };
 
     return (
-        <PartyRoomPropsContext.Provider value={{partyRoomProps}}>
+        <ConversationPropsContext.Provider value={{conversationProps}}>
             {children}
-        </PartyRoomPropsContext.Provider>
+        </ConversationPropsContext.Provider>
     );
 }

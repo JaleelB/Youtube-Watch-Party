@@ -1,13 +1,13 @@
 import { Message, PeopleTwoTone } from '@mui/icons-material';
 import { Box } from '@mui/material';
 import React from 'react';
-import { usePartyRoomPropsContext } from '../../context/PartyRoomContext';
+import { useConversationContext } from '../../context/ConversationContext';
 import './TabSwitch.scss'
 
 const TabSwitch = () => {
 
-    const partyRoomProps = usePartyRoomPropsContext();
-    const { showChat, setShowChat } = partyRoomProps.partyRoomProps;
+    const props = useConversationContext();
+    const { showChat, setShowChat } = props.conversationProps;
 
     return(
         <Box id='tab-switch' onClick={()=> {

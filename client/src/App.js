@@ -1,13 +1,14 @@
-import { PartyRoomPropsProvider } from './context/PartyRoomContext';
-import {PartyRoom} from './webpages';
+import { ConversationPropsProvider } from './context/ConversationContext';
+import {PartyRoom, Home} from './webpages';
 
 function App() {
   return (
-    <PartyRoomPropsProvider>
+    <ConversationPropsProvider>
       <div className="App">
-        <PartyRoom/>
+        {/* <PartyRoom/> */}
+        <Home/>
       </div>
-    </PartyRoomPropsProvider>
+    </ConversationPropsProvider>
   );
 }
 

@@ -3,7 +3,7 @@ import {Box} from '@mui/material';
 import {
     CTAButton, CommentField, ProgressBar,
      HeaderBar, MessageBody, VideoPlayer,
-     SubmitLinkBody
+     SubmitLinkBody, NameModal
 } from '../../components';
 import './PartyRoom.scss';
 import { AddBox, ArrowDropDown, PeopleOutlineTwoTone } from '@mui/icons-material';
@@ -17,6 +17,9 @@ const PartyRoom = () => {
 
     return(
         <Box id="party-room">
+
+            {/* <NameModal/> */}
+
             <HeaderBar/>
 
             <Box className="inner">
@@ -32,7 +35,7 @@ const PartyRoom = () => {
                         <CTAButton text="Leave Room" buttonFunction={closeRoom}/>
                     </Box>
 
-                    {/* <SubmitLinkBody/> */}
+                    
 
                     <VideoPlayer/>
 
