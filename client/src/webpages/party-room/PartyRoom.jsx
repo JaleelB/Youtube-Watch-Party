@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {Box} from '@mui/material';
 import {
     CTAButton, CommentField, ProgressBar,
@@ -10,6 +10,7 @@ import { AddBox, ArrowDropDown, PeopleOutlineTwoTone } from '@mui/icons-material
 
 
 const PartyRoom = () => {
+
 
     const closeRoom = () => {
         console.log("Going back to main room")

@@ -27,7 +27,8 @@
         gap: 10px; padding: 10px .5rem; list-style: none;
 
       
-        @media screen and (max-width: 1024px) and (orientation: portrait) {
+        // @media screen and (max-width: 1024px) and (orientation: portrait) {
+        @media screen and (orientation: portrait) {
             height: 53%; 
         }
 

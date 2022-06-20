@@ -54,7 +54,7 @@ const MessageBody = () => {
       <ul className="messages-container">
           {
             messages.map((messageValue, index) => {
-              console.log(isMessageSender)
+              // console.log(isMessageSender)
               //checks if the current message is the last one in the message array
               const lastMessage = messages.length - 1 === index;
               return (

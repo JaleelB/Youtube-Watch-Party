@@ -1,8 +1,12 @@
 import { Avatar, Box } from '@mui/material';
-import React from 'react';
+import React, { useContext } from 'react';
+import { ParticipantContext } from '../../context/ParticipantContext';
 import './HeaderBar.scss';
 
 const HeaderBar = () => {
+
+    const {hostName} = useContext(ParticipantContext);
+
     return(
         <Box id='header-bar'>
             <Box className="logo-wrapper">
@@ -11,7 +15,7 @@ const HeaderBar = () => {
             <Box className="host-details">
                 <Avatar className="profile-icon"/>
                 <Box className="host-name-title">
-                    <h2 className="host-name">Random Name</h2>
+                    <h2 className="host-name">{hostName ? hostName : 'John Doe'}</h2>
                     <h2 className="host-title">Party Host</h2>
                 </Box>
             </Box>

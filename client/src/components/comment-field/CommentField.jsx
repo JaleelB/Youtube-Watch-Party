@@ -1,5 +1,5 @@
 import {Box} from '@mui/material';
-import React,{useRef} from 'react';
+import React,{useEffect, useRef} from 'react';
 import { useConversationContext } from '../../context/ConversationContext';
 import {CTAButton} from '../../components';
 import './CommentField.scss';
@@ -28,7 +28,7 @@ const CommentField = () => {
         if(userMessage !== ''){
             socket.emit('send_message', {
                 message: userMessage,
-                isSender: true
+                // isSender: true
             });
         }
 
@@ -36,6 +36,24 @@ const CommentField = () => {
         inputRef.current.value = "";
         
     };
+
+    const emitMessageOnEnerKeypress = (event) => {
+        if(event.keyCode === 13){
+            console.log(userMessage)
+            emitMessage();
+        }
+        
+    }
+
+    //listens for enter keypress after typing message. if enter key is pressed it calls emit function
+    useEffect(()=>{
+
+        window.addEventListener('keypress', emitMessageOnEnerKeypress);
+        return () => {
+            window.removeEventListener('keypress', emitMessageOnEnerKeypress);
+        };
+
+    },[])
 
     return(
         <Box id="comment-field">

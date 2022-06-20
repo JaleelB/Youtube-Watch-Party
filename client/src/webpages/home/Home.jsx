@@ -1,9 +1,27 @@
 import { Box, Link } from '@mui/material';
-import React from 'react';
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CTAButton } from '../../components';
+import { ParticipantContext } from '../../context/ParticipantContext';
+import { v4 as uuidv4 } from 'uuid';
 import './Home.scss';
 
 const Home = () => {
+
+    const [hostDisplayName, setHostDisplayName] = useState('');
+    const [participantDisplayName, setParticipantDisplayName] = useState('');
+    const [ytVideoURL, setYTVideoURL] = useState('');
+    const [joinPartyURL, setJoinPartyURL] = useState('');
+
+    const {dispatch} = useContext(ParticipantContext);
+
+    const navigate = useNavigate();
+
+    const submitHostDetails = () => {
+        if(hostDisplayName !== '') dispatch({ type: 'create-host-participant', payload: hostDisplayName});
+        navigate(`/room/${uuidv4()}`);
+    };
+
   return (
     <main id="home">
 
@@ -76,14 +94,20 @@ const Home = () => {
             <Box className="input-wrapper">
                 <Box className="input">
                     <label htmlFor="host-name" className="input-label">Party Display Name</label>
-                    <input id="host-name" type="text"/>
+                    <input 
+                        id="host-name" 
+                        type="text"
+                        onChange={(e)=> {
+                            setHostDisplayName(e.target.value);
+                        }}
+                    />
                 </Box>
                 
                 <Box className="input">
                     <label htmlFor="video-link" className="input-label">YouTube Video Link</label>
                     <input id="video-link" type="text"/>
                 </Box>
-                <CTAButton text="Begin Hosting"/>
+                <CTAButton text="Begin Hosting" buttonFunction={submitHostDetails}/>
             </Box>
             
         </Box>
