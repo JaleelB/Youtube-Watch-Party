@@ -1,7 +1,8 @@
-import { Box } from '@mui/material';
-import React, {useState, useCallback} from 'react';
+import { Box, useFormControl } from '@mui/material';
+import React, {useState, useCallback, useContext, useEffect} from 'react';
 import {CommentField, TabSwitch} from '../../components';
 import { useConversationContext } from '../../context/ConversationContext';
+import { ParticipantContext } from '../../context/ParticipantContext';
 import './MessageBody.scss';
 
 const MessageBody = () => {
@@ -11,38 +12,42 @@ const MessageBody = () => {
       showChat, messages, setMessages, socket
    } = props.conversationProps;
 
+  const {name} = useContext(ParticipantContext);
 
   //scrolls into view when latest message is sent
   const setLastMessageRef = useCallback( node => {
     if(node) node.scrollIntoView({ smooth: true});
   }, [])
 
-  const addMessage = (message) => {   
-    if(message !== ''){
+  const addUserMessage = async (messageData) => {   
+    if(messageData){
+      //displays message for all users
+      setMessages([
+        ...messages, messageData
+      ])
+    }
+  };
+
+  const addSystemMessage = async (message) => {   
+    if(message){
+      //displays message for all users
       setMessages([
         ...messages, message
       ])
     }
   };
 
-  const[isMessageSender, setIsMessageSender] = useState();
   // useEffect(()=>{
-    socket.on("receive_message", (data) =>{
-      addMessage(data.message)
-
-      // console.log(data)
-      setIsMessageSender(false);
-
-      if(data.isSender){
-        setIsMessageSender(true);
-      }else{
-        setIsMessageSender(false);
-      }
+    socket.on("receive_chat_message", (data) =>{
+      addUserMessage(data)
     })
 
-  // },[socket]);
-
-
+    socket.on("user_connected", (name) =>{
+      addSystemMessage(`${name} has joined the party`)
+    })
+  // },[socket])
+  
+  
 
   return (
     <Box id='message-body'>
@@ -54,24 +59,39 @@ const MessageBody = () => {
       <ul className="messages-container">
           {
             messages.map((messageValue, index) => {
-              // console.log(isMessageSender)
-              //checks if the current message is the last one in the message array
+              
+              
               const lastMessage = messages.length - 1 === index;
               return (
                 <li 
                   key={index} 
-                  className={isMessageSender ? 'align-left' : ''}
+                  className={`${messageValue.sender === name ? 'align-left' : ''} ${!messageValue.sender ? 'center-align' : ''}`}
                   ref={lastMessage ? setLastMessageRef : null}
                 >
-                  <p className="message">{messageValue}</p>
-                  {isMessageSender ? 'You' : ''}
+                  <p 
+                    className={`${ !messageValue.sender ? 'system-message' :  'chat-message' }`}
+                    style={{backgroundColor: messageValue.sender === name && '#ff0000'}}
+                  >
+                    {messageValue.message ? messageValue.message : messageValue }
+                  </p>
+                  <p className="sender-details">
+                    <p>
+                      {
+                        messageValue.sender === name ? 'You':
+                        messageValue.sender ? messageValue.sender
+                        : ''
+                      }
+                    </p>
+                    <p>{messageValue.timeStamp}</p>
+                  </p>
+                  
                 </li>
               )
             })
           }
       </ul>
 
-      <CommentField />
+      <CommentField/>
 
     </Box>
   )

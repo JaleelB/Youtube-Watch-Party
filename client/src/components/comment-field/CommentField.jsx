@@ -1,9 +1,10 @@
 import {Box} from '@mui/material';
-import React,{useEffect, useRef} from 'react';
+import React,{useContext, useRef} from 'react';
 import { useConversationContext } from '../../context/ConversationContext';
 import {CTAButton} from '../../components';
 import './CommentField.scss';
 import { Send } from '@mui/icons-material';
+import { ParticipantContext } from '../../context/ParticipantContext';
 
 
 const CommentField = () => {
@@ -14,22 +15,23 @@ const CommentField = () => {
         userMessage, setUserMessage, socket
     } = props.conversationProps;
 
+    const {name} = useContext(ParticipantContext);
+
 
     const inputRef = useRef(null);
     const getUserInput = (e) => setUserMessage(e.target.value);
 
-    const emitMessage = () => {
-        
-        //updates message list on senders screen to see message they sent
-        setMessages([
-            ...messages, userMessage
-        ]);
-        
+    const emitMessage = async() => {
+    
         if(userMessage !== ''){
-            socket.emit('send_message', {
-                message: userMessage,
-                // isSender: true
-            });
+
+            const messageData = {
+                sender: name,
+                message: userMessage
+            }
+
+            //sends message to server
+            socket.emit('chat_message', messageData);
         }
 
         setUserMessage('');
@@ -37,23 +39,6 @@ const CommentField = () => {
         
     };
 
-    const emitMessageOnEnerKeypress = (event) => {
-        if(event.keyCode === 13){
-            console.log(userMessage)
-            emitMessage();
-        }
-        
-    }
-
-    //listens for enter keypress after typing message. if enter key is pressed it calls emit function
-    useEffect(()=>{
-
-        window.addEventListener('keypress', emitMessageOnEnerKeypress);
-        return () => {
-            window.removeEventListener('keypress', emitMessageOnEnerKeypress);
-        };
-
-    },[])
 
     return(
         <Box id="comment-field">

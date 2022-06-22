@@ -5,21 +5,32 @@ import { CTAButton } from '../../components';
 import { ParticipantContext } from '../../context/ParticipantContext';
 import { v4 as uuidv4 } from 'uuid';
 import './Home.scss';
+import { useConversationContext } from '../../context/ConversationContext';
 
 const Home = () => {
 
     const [hostDisplayName, setHostDisplayName] = useState('');
     const [participantDisplayName, setParticipantDisplayName] = useState('');
     const [ytVideoURL, setYTVideoURL] = useState('');
-    const [joinPartyURL, setJoinPartyURL] = useState('');
+    const [roomID, setRoomID] = useState('');
 
     const {dispatch} = useContext(ParticipantContext);
+
+    const props = useConversationContext();
+    const { socket } = props.conversationProps;
 
     const navigate = useNavigate();
 
     const submitHostDetails = () => {
         if(hostDisplayName !== '') dispatch({ type: 'create-host-participant', payload: hostDisplayName});
         navigate(`/room/${uuidv4()}`);
+        // socket.emit('new_user', hostDisplayName);
+    };
+
+    const submitParticipantDetails = () => {
+        if(participantDisplayName !== '') dispatch({ type: 'create-participant', payload: participantDisplayName});
+        navigate(`/room/${roomID}`);
+        socket.emit('new_user', participantDisplayName, roomID);
     };
 
   return (
@@ -124,7 +135,7 @@ const Home = () => {
             </h2>
         </Box>
 
-        <Box className="host-details">
+        <Box className="participant-details">
 
             <Box className="text-wrapper">
                 <p className="instructions">
@@ -136,15 +147,27 @@ const Home = () => {
 
             <Box className="input-wrapper">
                 <Box className="input">
-                    <label htmlFor="host-name" className="input-label">Party Display Name</label>
-                    <input id="host-name" type="text"/>
+                    <label htmlFor="participant-name" className="input-label">Party Display Name</label>
+                    <input 
+                        id="participant-name" 
+                        type="text"
+                        onChange={(e)=> {
+                            setParticipantDisplayName(e.target.value);
+                        }}
+                    />
                 </Box>
                 
                 <Box className="input">
-                    <label htmlFor="video-link" className="input-label">Room Id</label>
-                    <input id="video-link" type="text"/>
+                    <label htmlFor="room-id" className="input-label">Room Id</label>
+                    <input 
+                        id="room-id" 
+                        type="text"
+                        onChange={(e)=> {
+                            setRoomID(e.target.value);
+                        }}
+                    />
                 </Box>
-                <CTAButton text="Join Party"/>
+                <CTAButton text="Join Party" buttonFunction={submitParticipantDetails}/>
             </Box>
             
         </Box>

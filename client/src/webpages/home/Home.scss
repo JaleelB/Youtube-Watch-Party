@@ -4,6 +4,7 @@
     width: $min-width; min-height: $min-height;
     max-width: 1600px;  margin-inline: auto;
     font-family: $ft-sans; position: relative;
+    box-sizing: border-box;
 
     .header{
         position: absolute; top: 1rem; left: 0; right: 0;
@@ -172,7 +173,7 @@
             }
         }
 
-        .host-details{
+        .host-details, .participant-details{
             display: flex; flex-direction: row;
             width: 100%; justify-content: space-between;
             // border: 1px solid;

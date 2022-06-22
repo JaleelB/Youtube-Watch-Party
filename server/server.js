@@ -4,6 +4,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const cors = require("cors");
+const formatUserMessage = require('./utils/messageFormat')
 
 app.use(cors());
 
@@ -14,33 +15,37 @@ const io = new Server(server, {
     },
 });
 
-// io.on('connection', (socket) => {
-
-//     console.log(`User ${socket.id} connected`);
-
-//     socket.on('disconnect', () => {
-//       console.log(`User ${socket.id} disconnected`);
-//     });
-
-//     socket.on('send_message', (data) => {
-//         socket.broadcast.emit("receive_message", data);
-//     })
-// });
+// const participants = {};
 
 io.on('connection', (socket) => {
 
     console.log(`User ${socket.id} connected`);
+    
+    //welcome message to user
+    socket.emit('system_message', 'You joined the party chat')
+
+    //broadfcast to everyone when a user joins
+    socket.broadcast.emit('system_message', 'User has joined chat')
 
     socket.on('disconnect', ()=>{
-        console.log(`User ${socket.id} disconnected`);
+        // console.log(`${socket.id} has disconnected`)
+        // delete participants[socket.id];
+        io.emit('system_message',`User ${socket.id} has left the party`)
     })
 
-    socket.on('send_message', (data)=>{
-        console.log(data.message);
-        socket.broadcast.emit("receive_message", data);
+    // socket.on('new_user', (name, room)=>{
+    //     // participants[socket.id] = name;
+    //     socket.join(room);
+    //     socket.to(room).emit("user_connected", name);
+    //     // socket.broadcast.emit("user_connected", name);
+    // })
+
+    socket.on('chat_message', (data)=>{
+        // socket.broadcast.emit("receive_chat_message", data);
+        io.emit("receive_chat_message", formatUserMessage(data));
     })
 })
 
-server.listen(4000, () => {
+server.listen(process.env.PORT || 4000, () => {
     console.log("SERVER Is RUNNING");
 });

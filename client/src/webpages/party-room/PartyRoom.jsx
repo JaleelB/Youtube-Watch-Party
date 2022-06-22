@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {Box} from '@mui/material';
 import {
     CTAButton, CommentField, ProgressBar,
@@ -7,14 +7,37 @@ import {
 } from '../../components';
 import './PartyRoom.scss';
 import { AddBox, ArrowDropDown, PeopleOutlineTwoTone } from '@mui/icons-material';
-
+import { useConversationContext } from '../../context/ConversationContext';
+import { ParticipantContext } from '../../context/ParticipantContext';
 
 const PartyRoom = () => {
 
-
+    
+ 
     const closeRoom = () => {
         console.log("Going back to main room")
     };
+
+    const props = useConversationContext();
+    const { 
+        messages, setMessages, socket
+    } = props.conversationProps;
+
+    const {name} = useContext(ParticipantContext);
+    
+
+    // useEffect(()=>{
+    //     setMessages([ ...messages, 'You joined' ])
+    //     const newUser = () => socket.emit('new_user', name);
+    //     newUser();
+        
+    // },[])
+
+    socket.on('system_message', (message)=>{
+        setMessages([ ...messages, message ])
+    })
+    
+
 
     return(
         <Box id="party-room">
@@ -48,7 +71,7 @@ const PartyRoom = () => {
                     <CTAButton text="Invite" classname="inverted" component={<AddBox/>}/>
                 </Box>
                 
-                <MessageBody/>
+                <MessageBody socket={socket}/>
             </Box>
             
         </Box>

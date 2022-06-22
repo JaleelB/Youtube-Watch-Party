@@ -2,10 +2,10 @@
 
 #video-player{
     position: relative; 
-    width: 100%; min-height: calc(90% - 95px); //height of header + padding top & bottom + extra space for details
+    width: 100%; min-height: calc(95% - 95px); //height of header + padding top & bottom + extra space for details
    
     @media screen and (max-width: 390px){ 
-        min-height: calc(85% - 95px); margin-bottom: 5px;
+        min-height: calc(93% - 95px); margin-bottom: 5px;
     }
 
     .video-container{

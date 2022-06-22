@@ -3,7 +3,7 @@
 #message-body{
     position: relative; right: 0;
     height: calc(100% - 45px); width: 100%; max-width: 300px;
-    background-color: $color-grey4;
+    background-color: $color-grey4; 
     display: flex; flex-direction: column;
 
     .tab-details-wrapper{
@@ -20,10 +20,8 @@
 
     .messages-container{
         position: relative; width: 100%; 
-        // height: calc(100% - 43px); 
-        overflow-x: hidden; display: flex; flex-direction: column;
-        // justify-content: flex-end; 
-        overflow-y: scroll;
+        display: flex; flex-direction: column;
+        overflow-x: hidden; overflow-y: auto;
         gap: 10px; padding: 10px .5rem; list-style: none;
 
       
@@ -44,11 +42,18 @@
 
         li{
             display: flex; flex-direction: column; align-self: flex-start;
+            word-wrap: break-word; 
             &.align-left{ align-self: flex-end; text-align: right;}
-            .message{
-                background-color: $color-grey3; padding: 10px;
+            &.center-align{ width: auto; margin-inline: auto; }
+            .chat-message{
+                background-color: $color-grey5; padding: 10px;
                 width: auto;border-radius: $border-radius;
-                word-wrap: break-word; 
+                word-wrap: break-word; display:inline-block;
+                margin-bottom: 5px;
+            }
+            .sender-details{
+                display: flex; justify-content: space-between; 
+                font-size: $ft-sm; color: $color-grey7;
             }
         }
 

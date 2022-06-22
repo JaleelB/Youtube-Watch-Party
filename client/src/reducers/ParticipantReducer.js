@@ -14,13 +14,15 @@ const newParticipant = (name) => {
 }
 
 export const ParticipantReducer = (state, action) => {
-    console.log(action.payload);
+    
     switch(action.type){
         case ACTIONS.CREATE_PARTICIPANT:
+            // console.log(action)
             // return [...participants, newParticipant(action.payload.name)]
             return {
                 name: action.payload,
-                host: null
+                host: false,
+                // room: action.payload.room
             };
         case ACTIONS.CREATE_HOST_PARTICIPANT:
             // return [...participants, newParticipant(action.payload.name)]
@@ -33,14 +35,14 @@ export const ParticipantReducer = (state, action) => {
             return {
                 // id: action.payload.id,
                 name: action.payload.name,
-                host: null
+                // host: null
             }
         case ACTIONS.REMOVE_PARTICIPANT:
             // return participants.filter(participant => participant.id !== action.payload.id)
             return{
                 id: null,
                 name: null,
-                host: null
+                // host: null
             }
         default: 
             return state;

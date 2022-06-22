@@ -24,12 +24,13 @@
         }
 
         .action-btn-wrapper{
-            position: relative; 
+            position: relative;
             display: flex; justify-content: space-between; align-items: center;
             gap: $smaller-gap;
 
             .cta-btn{ 
-                max-width: 50px; min-width: 30px !important; min-height: 33px !important;
+                max-width: 50px; min-width: 30px !important; 
+                min-height: 33px !important; 
                 svg{ font-size: 1.2rem; }
             }
         }

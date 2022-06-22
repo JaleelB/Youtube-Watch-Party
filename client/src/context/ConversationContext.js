@@ -16,6 +16,7 @@ export function ConversationPropsProvider({children}){
     const [ messages, setMessages ] = useState([]);
     const [ userMessage, setUserMessage ] = useState('');
 
+
     const conversationProps = {
         showChat, setShowChat,
         messages, setMessages,
