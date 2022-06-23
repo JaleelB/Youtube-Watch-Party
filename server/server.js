@@ -4,7 +4,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const cors = require("cors");
-const formatUserMessage = require('./utils/messageFormat')
+const {formatUserMessage, formatSystemMessage} = require('./utils/messageFormat');
 
 app.use(cors());
 
@@ -19,29 +19,27 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
 
+    const id  = socket.handshake.query.id;
+    // socket.join(id)
+
     console.log(`User ${socket.id} connected`);
+    console.log(formatSystemMessage(`User ${socket.id} has left the party`))
     
     //welcome message to user
-    socket.emit('system_message', 'You joined the party chat')
+    socket.emit('system_message', formatSystemMessage('You joined the party chat'))
 
     //broadfcast to everyone when a user joins
-    socket.broadcast.emit('system_message', 'User has joined chat')
+    socket.broadcast.emit('system_message', formatSystemMessage('User has joined chat'))
 
     socket.on('disconnect', ()=>{
         // console.log(`${socket.id} has disconnected`)
         // delete participants[socket.id];
-        io.emit('system_message',`User ${socket.id} has left the party`)
+        io.emit('system_message', formatSystemMessage(`User ${socket.id} has left the party`))
     })
-
-    // socket.on('new_user', (name, room)=>{
-    //     // participants[socket.id] = name;
-    //     socket.join(room);
-    //     socket.to(room).emit("user_connected", name);
-    //     // socket.broadcast.emit("user_connected", name);
-    // })
 
     socket.on('chat_message', (data)=>{
         // socket.broadcast.emit("receive_chat_message", data);
+        console.log(formatUserMessage(data))
         io.emit("receive_chat_message", formatUserMessage(data));
     })
 })

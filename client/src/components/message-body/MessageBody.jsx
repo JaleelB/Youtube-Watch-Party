@@ -3,13 +3,16 @@ import React, {useState, useCallback, useContext, useEffect} from 'react';
 import {CommentField, TabSwitch} from '../../components';
 import { useConversationContext } from '../../context/ConversationContext';
 import { ParticipantContext } from '../../context/ParticipantContext';
+import { useSocketContext } from '../../context/SocketContext';
 import './MessageBody.scss';
 
 const MessageBody = () => {
 
+  // const socket = useSocketContext();
+  
   const props = useConversationContext();
   const { 
-      showChat, messages, setMessages, socket
+      showChat, chat
    } = props.conversationProps;
 
   const {name} = useContext(ParticipantContext);
@@ -17,37 +20,7 @@ const MessageBody = () => {
   //scrolls into view when latest message is sent
   const setLastMessageRef = useCallback( node => {
     if(node) node.scrollIntoView({ smooth: true});
-  }, [])
-
-  const addUserMessage = async (messageData) => {   
-    if(messageData){
-      //displays message for all users
-      setMessages([
-        ...messages, messageData
-      ])
-    }
-  };
-
-  const addSystemMessage = async (message) => {   
-    if(message){
-      //displays message for all users
-      setMessages([
-        ...messages, message
-      ])
-    }
-  };
-
-  // useEffect(()=>{
-    socket.on("receive_chat_message", (data) =>{
-      addUserMessage(data)
-    })
-
-    socket.on("user_connected", (name) =>{
-      addSystemMessage(`${name} has joined the party`)
-    })
-  // },[socket])
-  
-  
+  }, [])  
 
   return (
     <Box id='message-body'>
@@ -58,10 +31,10 @@ const MessageBody = () => {
         
       <ul className="messages-container">
           {
-            messages.map((messageValue, index) => {
+            chat.map((messageValue, index) => {
               
               
-              const lastMessage = messages.length - 1 === index;
+              const lastMessage = chat.length - 1 === index;
               return (
                 <li 
                   key={index} 
@@ -75,14 +48,14 @@ const MessageBody = () => {
                     {messageValue.message ? messageValue.message : messageValue }
                   </p>
                   <p className="sender-details">
-                    <p>
+                    <span className="sender">
                       {
                         messageValue.sender === name ? 'You':
                         messageValue.sender ? messageValue.sender
                         : ''
                       }
-                    </p>
-                    <p>{messageValue.timeStamp}</p>
+                    </span>
+                    <span className="time-sent">{messageValue.timeStamp}</span>
                   </p>
                   
                 </li>

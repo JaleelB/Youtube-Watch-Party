@@ -11,33 +11,33 @@ const CommentField = () => {
 
     const props = useConversationContext();
     const { 
-        messages, setMessages,
-        userMessage, setUserMessage, socket
+        // userMessage, setUserMessage, socket,
+        emitMessage, getUserInput, inputRef
     } = props.conversationProps;
 
-    const {name} = useContext(ParticipantContext);
+    // const {name} = useContext(ParticipantContext);
 
 
-    const inputRef = useRef(null);
-    const getUserInput = (e) => setUserMessage(e.target.value);
+    // const inputRef = useRef(null);
+    // const getUserInput = (e) => setUserMessage(e.target.value);
 
-    const emitMessage = async() => {
+    // const emitMessage = async() => {
     
-        if(userMessage !== ''){
+    //     if(userMessage !== ''){
 
-            const messageData = {
-                sender: name,
-                message: userMessage
-            }
+    //         const messageData = {
+    //             sender: name,
+    //             message: userMessage
+    //         }
 
-            //sends message to server
-            socket.emit('chat_message', messageData);
-        }
+    //         //sends message to server
+    //         socket.emit('chat_message', messageData);
+    //     }
 
-        setUserMessage('');
-        inputRef.current.value = "";
+    //     setUserMessage('');
+    //     inputRef.current.value = "";
         
-    };
+    // };
 
 
     return(

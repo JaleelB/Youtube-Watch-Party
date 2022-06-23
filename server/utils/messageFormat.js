@@ -10,4 +10,14 @@ function formatUserMessage (messageData) {
     }
 };
 
-module.exports = formatUserMessage;
+function formatSystemMessage (systemMessage) {
+
+    return {
+        message: systemMessage,
+    }
+};
+
+module.exports = {
+    formatUserMessage,
+    formatSystemMessage
+};
