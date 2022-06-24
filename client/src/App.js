@@ -7,14 +7,16 @@ import useSessionStorage from './hooks/useSessionStorage';
 
 function App() {
 
-  const [id, setID] = useSessionStorage([]);
+  const [id, setId] = useSessionStorage('roomId');
+  // const idRoom = sessionStorage.getItem('youtube-watch-party-roomId');
+
   return (
     <SocketContextProvider id={id}>
       <ParticipantContextProvider>
         <ConversationPropsProvider>
           <div className="App">
-            <Routes>
-              <Route path='/' exact element={<Home/>}/>
+            <Routes> 
+              <Route path='/' exact element={<Home setId={setId}  />}/>
               <Route path="/room/:id" exact element={<PartyRoom/>}/>
             </Routes>
           </div>
@@ -22,6 +24,7 @@ function App() {
       </ParticipantContextProvider>
     </SocketContextProvider>
   );
+
 }
 
 export default App;

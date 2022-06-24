@@ -5,6 +5,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const cors = require("cors");
 const {formatUserMessage, formatSystemMessage} = require('./utils/messageFormat');
+const {participantJoin, getParticipant} = require('./utils/participants');
 
 app.use(cors());
 
@@ -15,32 +16,56 @@ const io = new Server(server, {
     },
 });
 
-// const participants = {};
-
 io.on('connection', (socket) => {
 
-    const id  = socket.handshake.query.id;
-    // socket.join(id)
-
     console.log(`User ${socket.id} connected`);
-    console.log(formatSystemMessage(`User ${socket.id} has left the party`))
-    
-    //welcome message to user
-    socket.emit('system_message', formatSystemMessage('You joined the party chat'))
 
-    //broadfcast to everyone when a user joins
-    socket.broadcast.emit('system_message', formatSystemMessage('User has joined chat'))
+    // const hostRoom = socket.handshake.query.id;
+    // socket.join(hostRoom); 
+    // socket.emit('system_message', formatSystemMessage('You joined the party chat')) 
+
+    socket.on('host_room', ({username}) => {
+
+        const hostRoom = socket.handshake.query.id;
+        const host = participantJoin(socket.id, username, hostRoom, true);
+        socket.join(hostRoom);
+
+        //welcome message to user
+        socket.emit('system_message', formatSystemMessage('You joined the party chat'))
+
+        //broadfcast to everyone when a user joins≥
+        socket.broadcast.to(hostRoom).emit('system_message', formatSystemMessage(`${host.username} has joined the party`))
+        
+
+    })
+
+    
+    socket.on('join_room', ({username, room, isHost}) => {
+
+        //creates a new participant and adds them to list of participants to get participants in room
+        const participant = participantJoin(socket.id, username, room, isHost);
+        // participantJoin(socket.id, username, room, isHost);
+        socket.join(participant.room);
+
+        //welcome message to user
+        socket.emit('system_message', formatSystemMessage('You joined the party chat'))
+
+        //broadfcast to everyone when a user joins≥
+        socket.broadcast.to(participant.room).emit('system_message', formatSystemMessage(`${username} has joined the party`))
+        
+
+    })
+    
 
     socket.on('disconnect', ()=>{
-        // console.log(`${socket.id} has disconnected`)
-        // delete participants[socket.id];
         io.emit('system_message', formatSystemMessage(`User ${socket.id} has left the party`))
     })
 
     socket.on('chat_message', (data)=>{
-        // socket.broadcast.emit("receive_chat_message", data);
-        console.log(formatUserMessage(data))
-        io.emit("receive_chat_message", formatUserMessage(data));
+        // console.log("socket: ", socket.id)
+        const participant = getParticipant(socket.id)
+        console.log("participant: ", participant)
+        io.to(participant.room).emit("receive_chat_message", formatUserMessage(data));
     })
 })
 

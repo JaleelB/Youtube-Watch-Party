@@ -8,15 +8,16 @@ export function useSocketContext(){
 }
 
 export function SocketContextProvider({id, children}){
-
+    
     const [socket, setSocket] = useState();
 
     //create a socket when page initialy loads or whenever host id changes
     useEffect(()=>{
         const newSocket = io('http://localhost:4000', {query: {id} })
+        // const newSocket = io.connect('http://localhost:4000')
         setSocket(newSocket);
 
-        //close out the current socket. This prevents having multiple sockets runnning on
+        //close out the current socket when new scoket is created. This prevents having multiple sockets runnning on
         //the same server which can result in duplicate messages etc
         return ()=> newSocket.close();
     },[id])

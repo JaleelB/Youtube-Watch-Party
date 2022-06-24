@@ -1,49 +1,25 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {Box} from '@mui/material';
 import {
-    CTAButton, CommentField, ProgressBar,
-     HeaderBar, MessageBody, VideoPlayer,
-     SubmitLinkBody, NameModal
+    CTAButton,HeaderBar, MessageBody, VideoPlayer
 } from '../../components';
 import './PartyRoom.scss';
 import { AddBox, ArrowDropDown, PeopleOutlineTwoTone, VideoCameraBack } from '@mui/icons-material';
-import { useConversationContext } from '../../context/ConversationContext';
+import { ParticipantContext } from '../../context/ParticipantContext';
 import { useSocketContext } from '../../context/SocketContext';
 
 const PartyRoom = () => {
 
-
+    const { name, host, room } = useContext(ParticipantContext);
     const socket = useSocketContext();
 
-    const props = useConversationContext();
-    const { setChat, chat, addMessageToChat} = props.conversationProps;
+    useEffect(()=>{
 
-    // async function addMessageToChat (messageData){
-    //     setChat([
-    //         ...chat, messageData
-    //     ])
-    // }
+        if(!socket) return;
 
-    // useEffect(()=>{
+        if(host && room) socket.emit('host_room', {username: name} );
 
-    //     if(!socket) return;
-
-        // socket.on('system_message', (message)=>{
-        //     addMessageToChat(message)
-        // })
-
-        // socket.on("receive_chat_message", (data) =>{
-        //     addMessageToChat(data)
-        // })
-      
-    //     return () => {
-    //         socket.off('recieve_message');
-    //         socket.off('system_message');
-    //         socket.off('user_connected');
-    //     }
-
-    // },[socket])
-
+    },[socket])
 
     return(
         <Box id="party-room">

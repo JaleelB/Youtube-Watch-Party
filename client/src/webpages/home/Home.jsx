@@ -1,41 +1,50 @@
 import { Box, Link } from '@mui/material';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CTAButton } from '../../components';
 import { ParticipantContext } from '../../context/ParticipantContext';
 import { v4 as uuidv4 } from 'uuid';
 import './Home.scss';
-import { useConversationContext } from '../../context/ConversationContext';
+import { useSocketContext } from '../../context/SocketContext';
 
-const Home = () => {
+const Home = ({setId}) => {
 
     const [hostDisplayName, setHostDisplayName] = useState('');
     const [participantDisplayName, setParticipantDisplayName] = useState('');
     const [ytVideoURL, setYTVideoURL] = useState('');
-    const [roomID, setRoomID] = useState('');
+    const [joinRoomID, setJoinRoomID] = useState('');
 
+    const socket = useSocketContext();
     const {dispatch} = useContext(ParticipantContext);
-
-    const props = useConversationContext();
-    const { socket } = props.conversationProps;
-
     const navigate = useNavigate();
 
+    //extracts room id from url
+    const getIdFromURL = () =>{
+            const url = joinRoomID.toString().split("/");
+            const roomId = url[url.length - 1];
+            return roomId;
+    }
+
     const submitHostDetails = () => {
-        if(hostDisplayName !== '') dispatch({ type: 'create-host-participant', payload: hostDisplayName});
-        navigate(`/room/${uuidv4()}`);
-        // socket.emit('new_user', hostDisplayName);
+        
+        const idRoom = uuidv4()
+        setId(idRoom);
+
+        if(hostDisplayName !== '') dispatch({ type: 'create-host-participant', payload: {name: hostDisplayName, roomID: idRoom}});
+        navigate(`/room/${idRoom}`);
+        // socket.emit('join_room', {username: hostDisplayName, room: idRoom, isHost: true} );
     };
 
     const submitParticipantDetails = () => {
-        if(participantDisplayName !== '') dispatch({ type: 'create-participant', payload: participantDisplayName});
-        navigate(`/room/${roomID}`);
-        socket.emit('new_user', participantDisplayName, roomID);
+        console.log(getIdFromURL())
+        if(participantDisplayName !== '') dispatch({ type: 'create-participant', payload: {name: participantDisplayName, roomID: getIdFromURL()}});
+        navigate(`/room/${getIdFromURL()}`);
+        socket.emit('join_room', {username: participantDisplayName, room: getIdFromURL()} );
     };
 
   return (
     <main id="home">
-
+  
         <Box className="header">
             <Box className="logo">
                 <h2 className="header-text text-1">block</h2>
@@ -163,7 +172,7 @@ const Home = () => {
                         id="room-id" 
                         type="text"
                         onChange={(e)=> {
-                            setRoomID(e.target.value);
+                            setJoinRoomID(e.target.value);
                         }}
                     />
                 </Box>

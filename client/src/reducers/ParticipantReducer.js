@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 const ACTIONS = {
     CREATE_HOST_PARTICIPANT: 'create-host-participant',
     CREATE_PARTICIPANT: 'create-participant',
@@ -8,10 +6,6 @@ const ACTIONS = {
     REMOVE_PARTICIPANT: 'renove-participant'
 };
 
-//creates a new participant using name provided and generating a unique id for each user as a fallback
-const newParticipant = (name) => {
-    return { id: uuidv4() , name: name};
-}
 
 export const ParticipantReducer = (state, action) => {
     
@@ -20,15 +14,17 @@ export const ParticipantReducer = (state, action) => {
             // console.log(action)
             // return [...participants, newParticipant(action.payload.name)]
             return {
-                name: action.payload,
+                name: action.payload.name,
                 host: false,
-                // room: action.payload.room
+                roomID: action.payload.roomID
             };
         case ACTIONS.CREATE_HOST_PARTICIPANT:
             // return [...participants, newParticipant(action.payload.name)]
+            // console.log(action.payload)
             return {
-                name: action.payload,
-                host: true
+                name: action.payload.name,
+                host: true,
+                roomID: action.payload.roomID
             };
         case ACTIONS.ADD_PARTICIPANT:
             // return [...participants, newParticipant(action.payload.name)]

@@ -11,33 +11,8 @@ const CommentField = () => {
 
     const props = useConversationContext();
     const { 
-        // userMessage, setUserMessage, socket,
         emitMessage, getUserInput, inputRef
     } = props.conversationProps;
-
-    // const {name} = useContext(ParticipantContext);
-
-
-    // const inputRef = useRef(null);
-    // const getUserInput = (e) => setUserMessage(e.target.value);
-
-    // const emitMessage = async() => {
-    
-    //     if(userMessage !== ''){
-
-    //         const messageData = {
-    //             sender: name,
-    //             message: userMessage
-    //         }
-
-    //         //sends message to server
-    //         socket.emit('chat_message', messageData);
-    //     }
-
-    //     setUserMessage('');
-    //     inputRef.current.value = "";
-        
-    // };
 
 
     return(
