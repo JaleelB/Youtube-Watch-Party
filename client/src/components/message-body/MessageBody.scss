@@ -14,10 +14,6 @@
         padding: 10px 0 10px 10px;  border-bottom: 1px solid $color-grey1;
 
         .tab-title{ font-size: $ft-small-title; font-weight: 500;}
-
-        #tab-switch{
-            @media screen and (max-width: 1024px){ display: none; }
-        }
     }
 
     .messages-container{
@@ -60,5 +56,35 @@
 
     #comment-field{
         position: relative; margin-top: auto;
+    }
+
+    .participants-container{
+        height: 100%; padding: 10px;
+        display: flex; flex-direction: column;
+        gap: 10px; align-items: center; 
+        list-style-type: none;
+
+        .participant{
+            width: 95%; margin-inline: auto; 
+            display: flex; justify-content: space-between; align-items: center;
+            // background-color: $color-grey5; 
+            
+
+            .participant-name-avatar{
+                 display: flex; align-items: center;
+                .participant-avatar{
+                    width: 2rem; height: 2rem; display: inline-block;
+                    border-radius: $border-radius; background-color: $color-grey5;
+                    margin-right: 10px; display: grid; place-items: center;
+                }
+            }
+
+            .active-status{
+                width: .7rem; height: .7rem; display: inline-block;
+                border-radius: 50%; background-color: green;
+            }
+
+        }
+        
     }
 }

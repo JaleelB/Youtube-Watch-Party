@@ -39,6 +39,11 @@ io.on('connection', (socket) => {
         //broadfcast to everyone when a user joins≥
         socket.broadcast.to(hostRoom).emit('system_message', formatSystemMessage(`${host.username} has joined the party`))
 
+        //sends current list of users in roo to client
+        io.to(host.room).emit('room_participants', {
+            participantList: getParticipntsInRoom(host.room)
+        })
+
     })
 
     
@@ -46,7 +51,6 @@ io.on('connection', (socket) => {
 
         //creates a new participant and adds them to list of participants to get participants in room
         const participant = participantJoin(socket.id, username, room, isHost);
-        // participantJoin(socket.id, username, room, isHost);
         socket.join(participant.room);
 
         //welcome message to user
@@ -55,14 +59,24 @@ io.on('connection', (socket) => {
         //broadfcast to everyone when a user joins≥
         socket.broadcast.to(participant.room).emit('system_message', formatSystemMessage(`${username} has joined the party`))
         
-
+        //sends current list of users in roo to client
+        io.to(participant.room).emit('room_participants', {
+            participantList: getParticipntsInRoom(participant.room)
+        })
     })
     
 
     socket.on('disconnect', ()=>{
         const participant = removeParticipantOnLeave(socket.id)
         console.log("remove participant: ", participant)
-        if(participant) io.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} has left the party`))
+        if(participant){
+            io.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} has left the party`))
+
+            //sends current list of users in roo to client
+            io.to(participant.room).emit('room_participants', {
+                participantList: getParticipntsInRoom(participant.room)
+            })
+        }
     })
 
     socket.on('chat_message', (data)=>{

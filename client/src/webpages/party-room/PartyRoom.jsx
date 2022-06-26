@@ -11,7 +11,7 @@ import { useSocketContext } from '../../context/SocketContext';
 
 const PartyRoom = () => {
 
-    const { name, host, room } = useContext(ParticipantContext);
+    const { name, host, room , dispatch} = useContext(ParticipantContext);
     const socket = useSocketContext();
 
     const [open, setOpen] = useState(false);
@@ -32,14 +32,27 @@ const PartyRoom = () => {
         if(!socket) return;
 
         if(host && room) socket.emit('host_room', {username: name} );
-        // else{
-            //perform some action if theyre joining from link
-            //grab id from url enter username and host by default is null
-            // if(name && room) socket.emit('join_room', {username: name, room, isHost: false} );
-            // if(!room) 
-        // }
+
+    },[socket, host, room])
+
+    useEffect(()=>{
+
+        if(!socket) return;
+
+        socket.on('room_participants', ({participantList})=>{
+            console.log(participantList)
+            if(host) dispatch({type: 'update-host-participant', payload: participantList})
+            else if(!host && room) dispatch({type: 'update-participant', payload: participantList})
+        })
+
+        return () => {
+            socket.off('room_participants');
+        }
 
     },[socket])
+
+    
+
 
     return(
         <Box id="party-room">
