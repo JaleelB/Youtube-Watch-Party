@@ -23,7 +23,19 @@ function getParticipant(id){
     return participants.find(participant => participant.id === id);
 }
 
+function removeParticipantOnLeave(id){
+    const participantInRoom = participants.findIndex(participant => participant.id === id);
+     console.log("removed user: ", participants.splice(participantInRoom, 1), "partcipiants: ", getParticipant(id))
+    if(participantInRoom !== -1) return participants.splice(participantInRoom, 1)[0];
+}
+
+function getParticipntsInRoom(room){
+    return participants.filter(participant => participant.room === room)
+}
+
 module.exports = {
     participantJoin,
-    getParticipant
+    getParticipant,
+    removeParticipantOnLeave,
+    getParticipntsInRoom
 };

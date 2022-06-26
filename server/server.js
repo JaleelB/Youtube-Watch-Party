@@ -5,7 +5,10 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const cors = require("cors");
 const {formatUserMessage, formatSystemMessage} = require('./utils/messageFormat');
-const {participantJoin, getParticipant} = require('./utils/participants');
+const {
+    participantJoin, getParticipant,
+    removeParticipantOnLeave, getParticipntsInRoom
+} = require('./utils/participants');
 
 app.use(cors());
 
@@ -35,7 +38,6 @@ io.on('connection', (socket) => {
 
         //broadfcast to everyone when a user joins≥
         socket.broadcast.to(hostRoom).emit('system_message', formatSystemMessage(`${host.username} has joined the party`))
-        
 
     })
 
@@ -58,7 +60,9 @@ io.on('connection', (socket) => {
     
 
     socket.on('disconnect', ()=>{
-        io.emit('system_message', formatSystemMessage(`User ${socket.id} has left the party`))
+        const participant = removeParticipantOnLeave(socket.id)
+        console.log("remove participant: ", participant)
+        if(participant) io.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} has left the party`))
     })
 
     socket.on('chat_message', (data)=>{

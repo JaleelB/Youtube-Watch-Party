@@ -8,6 +8,8 @@ export {default as InvertedInput } from './inverted-input/InvertedInput';
 export {default as SubmitLinkBody } from './link-submission/SubmitLinkBody'; 
 export {default as TabSwitch} from './tab-switch/TabSwitch';
 export {default as NameModal} from './name-modal/NameModal';
+export {default as ModalPopup} from './modal-popup/ModalPopup';
+
 
 
 

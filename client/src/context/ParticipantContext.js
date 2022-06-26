@@ -15,13 +15,42 @@ export const ParticipantContext = createContext(INITIAL_STATE);
 export const ParticipantContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(ParticipantReducer, INITIAL_STATE);
 
+    // const socket = useSocketContext();
+
+    // const participantJoinRoom = () => {
+    //     const roomId = getIdFromURL();
+    //     console.log(roomId)
+    //     socket.emit('join_room', {username: state.name, room: roomId} );
+    // };
+
+    // const getIdFromURL = () =>{
+    //         const url = window.location.href.toString().split("/");
+    //         const roomId = url[url.length - 1];
+    //         return roomId;
+
+    // }
+
+    // useEffect(()=>{
+
+    //     if(!socket) return;
+
+    //     socket.on('system_message', (message)=>{
+    //         addMessageToChat(message)
+    //     })
+        
+
+    // },[socket])
+
    
+
     //saves user informaton after login to prevent losing it when refreshing
     useEffect(() => {
+        // if(state.host === true){
             sessionStorage.setItem(PREFIX + "name", JSON.stringify(state.name))
             sessionStorage.setItem(PREFIX + "host", JSON.stringify(state.host))
             sessionStorage.setItem(PREFIX + "roomId", JSON.stringify(state.roomID))
             
+        // }
 
     }, [state.name, state.host, state.roomID]);
 
