@@ -1,13 +1,14 @@
 const participants = [];
 
 //join participant to room
-function participantJoin(id, username, room, host){
+function participantJoin(id, username, room, host, currentVideoPlaying){
 
     const newParticipant = {
         id, 
         username, 
         room,
-        isHost: host || null
+        isHost: host || null,
+        currentVideoPlaying
     };
 
     participants.push(newParticipant);
@@ -25,7 +26,6 @@ function getParticipant(id){
 
 function removeParticipantOnLeave(id){
     const participantInRoom = participants.findIndex(participant => participant.id === id);
-     console.log("removed user: ", participants.splice(participantInRoom, 1), "partcipiants: ", getParticipant(id))
     if(participantInRoom !== -1) return participants.splice(participantInRoom, 1)[0];
 }
 

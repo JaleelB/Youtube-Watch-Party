@@ -15,20 +15,24 @@ export const ParticipantReducer = (state, action) => {
                 name: action.payload.name,
                 host: false,
                 roomID: action.payload.roomID,
-                participantList: []
+                participantList: [],
+                currentVideoPlaying: ''
             };
         case ACTIONS.CREATE_HOST_PARTICIPANT:
             return {
                 name: action.payload.name,
                 host: true,
                 roomID: action.payload.roomID,
-                participantList: []
+                participantList: [],
+                currentVideoPlaying: ''
             };
         case ACTIONS.UPDATE_HOST_PARTICIPANT:
             return {
-                ...state,
-                participantList: action.payload
-                // ...action.payload
+                ...state, 
+                participantList: action.payload.participantList,
+                currentVideoPlaying: action.payload.currentVideoPlaying
+                // participantList: action.payload
+                
             }
         case ACTIONS.UPDATE_PARTICIPANT:
             return{

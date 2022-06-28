@@ -96,8 +96,16 @@ const MessageBody = () => {
                       className="participant"
                     >
                       <p className="participant-name-avatar">
-                        <span className="participant-avatar">{participant.username ? participant.username[0] : ''}</span>
-                        <span className="participant-name">{participant.username ? participant.username : 'No participants'}</span>
+                        <span className="participant-avatar">
+                          {
+                            participant.username !== name ? participant.username[0] : 'Y'
+                          }
+                        </span>
+                        <span className="participant-name">
+                          {
+                            participant.username !== name ? participant.username : 'You'
+                          }
+                        </span>
                       </p>
 
                       <span className="active-status"></span>

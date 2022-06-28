@@ -9,6 +9,7 @@ const INITIAL_STATE = {
     host: JSON.parse(sessionStorage.getItem(PREFIX + "host")) || null,
     roomID: JSON.parse(sessionStorage.getItem(PREFIX + "roomId")) || null,
     participantList: JSON.parse(sessionStorage.getItem(PREFIX + "participants-in-room")) || [],
+    currentVideoPlaying: JSON.parse(sessionStorage.getItem(PREFIX + "current-video-playing")) || null
 };
 
 export const ParticipantContext = createContext(INITIAL_STATE);
@@ -25,9 +26,11 @@ export const ParticipantContextProvider = ({children}) => {
             sessionStorage.setItem(PREFIX + "host", JSON.stringify(state.host))
             sessionStorage.setItem(PREFIX + "roomId", JSON.stringify(state.roomID))
             sessionStorage.setItem(PREFIX + "participants-in-room", JSON.stringify(state.participantList))
+            sessionStorage.setItem(PREFIX + "current-video-playing", JSON.stringify(state.currentVideoPlaying))
+            
         // }
 
-    }, [state.name, state.host, state.roomID, state.participantList]);
+    }, [state.name, state.host, state.roomID, state.participantList, state.currentVideoPlaying]);
 
     return (
         <ParticipantContext.Provider
@@ -37,6 +40,7 @@ export const ParticipantContextProvider = ({children}) => {
                 host: state.host,
                 room: state.roomID,
                 participantList: state.participantList,
+                currentVideoPlaying: state.currentVideoPlaying,
                 dispatch,
                 // participantJoinRoom
             }}

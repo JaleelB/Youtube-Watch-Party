@@ -1,11 +1,17 @@
 @import '../../mainStyles.scss';
 
-#video-player{
+.video-player{
     position: relative; 
     width: 100%; min-height: calc(95% - 95px); //height of header + padding top & bottom + extra space for details
    
     @media screen and (max-width: 390px){ 
         min-height: calc(93% - 95px); margin-bottom: 5px;
+    }
+
+    &:not(:hover){
+        #progress-bar{
+            display: none;
+        }
     }
 
     .video-container{
@@ -14,10 +20,16 @@
 
         display: flex; flex-direction: column;
 
-        &:not(:hover){
-            #progress-bar{
-                display: none;
-            }
+        .video-player{ 
+            width: 100% !important; height: 100% !important;
+            pointer-events: none;
         }
     }
+}
+
+.fullscreen-player{
+    position: fixed; top: 0; 
+    left: 0; right: 0; bottom: 0;
+    width: $min-width; height: $min-height;
+    z-index: 2000;
 }

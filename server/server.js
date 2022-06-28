@@ -27,11 +27,15 @@ io.on('connection', (socket) => {
     // socket.join(hostRoom); 
     // socket.emit('system_message', formatSystemMessage('You joined the party chat')) 
 
-    socket.on('host_room', ({username}) => {
+    socket.on('host_room', ({username, currentVideoPlaying}) => {
+
+        console.log(username, currentVideoPlaying)
 
         const hostRoom = socket.handshake.query.id;
-        const host = participantJoin(socket.id, username, hostRoom, true);
+        const host = participantJoin(socket.id, username, hostRoom, true, currentVideoPlaying);
+
         socket.join(hostRoom);
+
 
         //welcome message to user
         socket.emit('system_message', formatSystemMessage('You joined the party chat'))
@@ -40,8 +44,9 @@ io.on('connection', (socket) => {
         socket.broadcast.to(hostRoom).emit('system_message', formatSystemMessage(`${host.username} has joined the party`))
 
         //sends current list of users in roo to client
-        io.to(host.room).emit('room_participants', {
-            participantList: getParticipntsInRoom(host.room)
+        io.to(host.room).emit('room_information', {
+            participantList: getParticipntsInRoom(host.room),
+            currentVideoPlaying: host.currentVideoPlaying
         })
 
     })
@@ -67,8 +72,11 @@ io.on('connection', (socket) => {
     
 
     socket.on('disconnect', ()=>{
+
+        console.log(`User ${socket.id} disconnected`);
+
         const participant = removeParticipantOnLeave(socket.id)
-        console.log("remove participant: ", participant)
+        
         if(participant){
             io.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} has left the party`))
 

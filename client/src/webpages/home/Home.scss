@@ -227,6 +227,14 @@
                     }
                 }
 
+                .empty-host-field-message, .empty-join-field-message, .invalid-message{
+                    display: block; margin-bottom: .8rem; 
+                    color: $primary-red; text-align: center;
+                    font-weight: 700; border: 1px solid $primary-red; 
+                    padding: 10px 0; border-radius: $border-radius;
+                    background-color: $color-grey4;
+                }
+
                 .cta-btn{ 
                     min-width: 100% !important; text-transform: uppercase;
                     padding: .3rem 0;

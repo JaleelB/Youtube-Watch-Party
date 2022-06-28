@@ -8,11 +8,13 @@ import './PartyRoom.scss';
 import { AddBox, ArrowDropDown, PeopleOutlineTwoTone, VideoCameraBack } from '@mui/icons-material';
 import { ParticipantContext } from '../../context/ParticipantContext';
 import { useSocketContext } from '../../context/SocketContext';
+import { useNavigate } from 'react-router-dom';
 
 const PartyRoom = () => {
 
-    const { name, host, room , dispatch} = useContext(ParticipantContext);
+    const { name, host, room , dispatch, participantList} = useContext(ParticipantContext);
     const socket = useSocketContext();
+    const navigate = useNavigate();
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -25,23 +27,12 @@ const PartyRoom = () => {
 
     }
 
-    //creates host participant after id neccessary for socket 
-    //handshake has been created
     useEffect(()=>{
 
         if(!socket) return;
 
-        if(host && room) socket.emit('host_room', {username: name} );
-
-    },[socket, host, room])
-
-    useEffect(()=>{
-
-        if(!socket) return;
-
-        socket.on('room_participants', ({participantList})=>{
-            console.log(participantList)
-            if(host) dispatch({type: 'update-host-participant', payload: participantList})
+        socket.on('room_information', ({participantList, currentVideoPlaying})=>{
+            if(host) dispatch({type: 'update-host-participant', payload: {participantList, currentVideoPlaying}})
             else if(!host && room) dispatch({type: 'update-participant', payload: participantList})
         })
 
@@ -51,8 +42,7 @@ const PartyRoom = () => {
 
     },[socket])
 
-    
-
+    const handleLeaveRoom = () => navigate('/');
 
     return(
         <Box id="party-room">
@@ -88,10 +78,10 @@ const PartyRoom = () => {
                             <h2 className="participant-text">
                                 <PeopleOutlineTwoTone/>
                             </h2>
-                            <span className="participant-count">5</span>
-                            <ArrowDropDown/>
+                            <span className="participant-count">{participantList.length}</span>
+                            {/* <ArrowDropDown/> */}
                         </Box>
-                        <CTAButton text="Leave Room" />
+                        <CTAButton text="Leave Room" buttonFunction={handleLeaveRoom}/>
                     </Box>
 
                     

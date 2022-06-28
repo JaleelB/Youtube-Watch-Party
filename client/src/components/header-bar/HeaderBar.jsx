@@ -5,7 +5,7 @@ import './HeaderBar.scss';
 
 const HeaderBar = () => {
 
-    const {host, name} = useContext(ParticipantContext);
+    const {participantList} = useContext(ParticipantContext);
 
     return(
         <Box id='header-bar'>
@@ -15,7 +15,13 @@ const HeaderBar = () => {
             <Box className="host-details">
                 <Avatar className="profile-icon"/>
                 <Box className="host-name-title">
-                    <h2 className="host-name">{host && name ? name : 'John Doe'}</h2>
+                    <h2 className="host-name">
+                        {
+                            participantList.map((participant)=>{
+                                if(participant.isHost) return participant.username;
+                            })
+                        }
+                    </h2>
                     <h2 className="host-title">Party Host</h2>
                 </Box>
             </Box>
