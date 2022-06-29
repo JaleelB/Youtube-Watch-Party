@@ -45,7 +45,7 @@ export function ConversationPropsProvider({children}){
             }
 
             //sends message to server
-            socket.emit('chat_message', {messageData, room});
+            socket.emit('chat_message', messageData);
         }
 
         setUserMessage('');

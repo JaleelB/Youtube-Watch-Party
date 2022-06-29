@@ -22,21 +22,26 @@ function createRoom(roomID, videoPlaying){
         }
     }
     rooms[roomID] = newRoom;
-    console.log("Rooms: ", rooms)
 }
 
 function addParticipantToRoom(roomID, participant){
     if(rooms[roomID]) 
         rooms[roomID].participants.push(participant);
-    // console.log("room: ", roomID, " Participants Room: ",  rooms[roomID].participants)
 }
 
-function removeParticipantFromRoom(roomID){
-    //
+function removeParticipantFromRoom(roomID, id){
+    const participantInRoom = rooms[roomID].participants.findIndex(participant => participant.id === id);
+
+    if(participantInRoom !== -1) rooms[roomID].participants.splice(participantInRoom, 1)[0];
+    else { return null; }
+
+    deleteRoom(roomID);
+    console.log("Delete Rooms update: ", rooms[roomID])
+
 }
 
 function getRoomParticipants(roomID){
-    console.log(rooms[roomID].participants)
+    console.log("get Room Participants: ", rooms[roomID].participants)
     return rooms[roomID].participants;
 }
 
@@ -44,9 +49,14 @@ function getRoom(roomID){
     return rooms[roomID];
 }
 
+function deleteRoom(roomID){
+    if(roomID && rooms[roomID].participants.length === 0) delete rooms[roomID]
+}
+
 module.exports = {
     createRoom,
     addParticipantToRoom,
     getRoomParticipants,
-    getRoom
+    getRoom,
+    removeParticipantFromRoom
 }

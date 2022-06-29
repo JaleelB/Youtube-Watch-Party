@@ -18,34 +18,30 @@ function createParticipant(id, username, room, host){
 
     addParticipantToRoom(room, newParticipant);
 
-    // console.log("Participants: " ,allParticipants)
     return newParticipant;
 }
 
 //finds and returns participant stored in participant list
 //so user information stored in server can be accessed
-function getParticipant(roomID, id){
-    const participantsInRoom = getRoomParticipants(roomID)
-    return participantsInRoom.find(participant => participant.id === id);
+function getParticipant(id){
+    const participant = allParticipants.find(participant => participant.id === id);
+    const participantsInRoom = getRoomParticipants(participant.room)
+    if(participantsInRoom) return participantsInRoom.find(participant => participant.id === id);
+
+    return null;
 }
 
-// function getParticipant(id){
-//     const participantsInRoom = getAllParticipantsInARoom()
-//     return participants.find(participant => participant.id === id);
-// }
+//remove user from list of all users
+function removeParticipantFromList(id){
+    const participantinList = allParticipants.findIndex(participant => participant.id === id);
+    if(participantinList !== -1) return allParticipants.splice(participantinList, 1)[0];
 
-function removeParticipantOnLeave(id){
-    const participantInRoom = allParticipants.findIndex(participant => participant.id === id);
-    if(participantInRoom !== -1) return allParticipants.splice(participantInRoom, 1)[0];
+    return null;
 }
 
-// function getParticipntsInRoom(room){
-//     return participants.filter(participant => participant.room === room)
-// }
 
 module.exports = {
     createParticipant,
     getParticipant,
-    removeParticipantOnLeave,
-    // getParticipntsInRoom
+    removeParticipantFromList
 };

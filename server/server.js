@@ -7,11 +7,11 @@ const cors = require("cors");
 const {formatUserMessage, formatSystemMessage} = require('./utils/messageFormat');
 const {
     createParticipant, getParticipant,
-    removeParticipantOnLeave
+    removeParticipantFromList
 } = require('./utils/participants');
 const {
     createRoom, getRoomParticipants,
-    getRoom
+    getRoom, removeParticipantFromRoom
 } = require('./utils/rooms');
 
 app.use(cors());
@@ -81,23 +81,24 @@ io.on('connection', (socket) => {
 
         console.log(`User ${socket.id} disconnected`);
 
-        const participant = removeParticipantOnLeave(socket.id)
-        
+        const participant = removeParticipantFromList(socket.id);
+        removeParticipantFromRoom(participant.room, socket.id);
+
         if(participant){
             io.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} has left the party`))
 
             //sends current list of users in roo to client
-            io.to(participant.room).emit('room_participants', {
-                participantList: getRoomParticipants(participant.room)
+            io.to(participant.room).emit('room_information', {
+                participantList: getRoomParticipants(participant.room),
+                currentVideoPlaying: getRoom(participant.room).videoDetails.currentVideoPlaying
             })
         }
+
     })
 
     socket.on('chat_message', (data)=>{
-        // console.log(data)
-        const participant = getParticipant(data.room, socket.id)
-        console.log("participant: ", participant)
-        io.to(participant.room).emit("receive_chat_message", formatUserMessage(data.messageData));
+        const participant = getParticipant(socket.id)
+        io.to(participant.room).emit("receive_chat_message", formatUserMessage(data));
     })
 })
 
