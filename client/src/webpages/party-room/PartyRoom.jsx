@@ -33,11 +33,11 @@ const PartyRoom = () => {
 
         socket.on('room_information', ({participantList, currentVideoPlaying})=>{
             if(host) dispatch({type: 'update-host-participant', payload: {participantList, currentVideoPlaying}})
-            else if(!host && room) dispatch({type: 'update-participant', payload: participantList})
+            else if(!host && room) dispatch({type: 'update-participant', payload: {participantList, currentVideoPlaying}})
         })
 
         return () => {
-            socket.off('room_participants');
+            socket.off('room_information');
         }
 
     },[socket])

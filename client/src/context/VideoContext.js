@@ -9,7 +9,7 @@ export function useVideoContext(){
 export function VideoContextProvider({children}){
 
     const [fullVideo, setFullVideo] = useState(false);
-    const [playVideo, setPlayVideo] = useState(true);
+    const [playVideo, setPlayVideo] = useState(false);
 
     const videoProps = {
         fullVideo, setFullVideo,

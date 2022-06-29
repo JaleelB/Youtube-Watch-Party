@@ -30,14 +30,13 @@ export const ParticipantReducer = (state, action) => {
             return {
                 ...state, 
                 participantList: action.payload.participantList,
-                currentVideoPlaying: action.payload.currentVideoPlaying
-                // participantList: action.payload
-                
+                currentVideoPlaying: action.payload.currentVideoPlaying  
             }
         case ACTIONS.UPDATE_PARTICIPANT:
             return{
                 ...state,
-                participantList: action.payload
+                participantList: action.payload.participantList,
+                currentVideoPlaying: action.payload.currentVideoPlaying 
             }
         default: 
             return state;

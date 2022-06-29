@@ -1,41 +1,51 @@
-const participants = [];
+const {
+    addParticipantToRoom, getRoomParticipants
+} = require('./rooms')
+
+const allParticipants = [];
 
 //join participant to room
-function participantJoin(id, username, room, host, currentVideoPlaying){
+function createParticipant(id, username, room, host){
 
     const newParticipant = {
         id, 
         username, 
         room,
-        isHost: host || null,
-        currentVideoPlaying
+        isHost: host || null
     };
 
-    participants.push(newParticipant);
+    allParticipants.push(newParticipant);
 
-    console.log("Participants: " ,participants)
+    addParticipantToRoom(room, newParticipant);
+
+    // console.log("Participants: " ,allParticipants)
     return newParticipant;
 }
 
 //finds and returns participant stored in participant list
 //so user information stored in server can be accessed
-function getParticipant(id){
-    console.log("get Participants: ", participants)
-    return participants.find(participant => participant.id === id);
+function getParticipant(roomID, id){
+    const participantsInRoom = getRoomParticipants(roomID)
+    return participantsInRoom.find(participant => participant.id === id);
 }
+
+// function getParticipant(id){
+//     const participantsInRoom = getAllParticipantsInARoom()
+//     return participants.find(participant => participant.id === id);
+// }
 
 function removeParticipantOnLeave(id){
-    const participantInRoom = participants.findIndex(participant => participant.id === id);
-    if(participantInRoom !== -1) return participants.splice(participantInRoom, 1)[0];
+    const participantInRoom = allParticipants.findIndex(participant => participant.id === id);
+    if(participantInRoom !== -1) return allParticipants.splice(participantInRoom, 1)[0];
 }
 
-function getParticipntsInRoom(room){
-    return participants.filter(participant => participant.room === room)
-}
+// function getParticipntsInRoom(room){
+//     return participants.filter(participant => participant.room === room)
+// }
 
 module.exports = {
-    participantJoin,
+    createParticipant,
     getParticipant,
     removeParticipantOnLeave,
-    getParticipntsInRoom
+    // getParticipntsInRoom
 };

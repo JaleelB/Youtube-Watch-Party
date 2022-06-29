@@ -6,9 +6,13 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const {formatUserMessage, formatSystemMessage} = require('./utils/messageFormat');
 const {
-    participantJoin, getParticipant,
-    removeParticipantOnLeave, getParticipntsInRoom
+    createParticipant, getParticipant,
+    removeParticipantOnLeave
 } = require('./utils/participants');
+const {
+    createRoom, getRoomParticipants,
+    getRoom
+} = require('./utils/rooms');
 
 app.use(cors());
 
@@ -32,7 +36,8 @@ io.on('connection', (socket) => {
         console.log(username, currentVideoPlaying)
 
         const hostRoom = socket.handshake.query.id;
-        const host = participantJoin(socket.id, username, hostRoom, true, currentVideoPlaying);
+        createRoom(hostRoom, currentVideoPlaying);
+        const host = createParticipant(socket.id, username, hostRoom, true);
 
         socket.join(hostRoom);
 
@@ -45,8 +50,8 @@ io.on('connection', (socket) => {
 
         //sends current list of users in roo to client
         io.to(host.room).emit('room_information', {
-            participantList: getParticipntsInRoom(host.room),
-            currentVideoPlaying: host.currentVideoPlaying
+            participantList: getRoomParticipants(host.room),
+            currentVideoPlaying: getRoom(host.room).videoDetails.currentVideoPlaying
         })
 
     })
@@ -55,7 +60,7 @@ io.on('connection', (socket) => {
     socket.on('join_room', ({username, room, isHost}) => {
 
         //creates a new participant and adds them to list of participants to get participants in room
-        const participant = participantJoin(socket.id, username, room, isHost);
+        const participant = createParticipant(socket.id, username, room, isHost);
         socket.join(participant.room);
 
         //welcome message to user
@@ -65,8 +70,9 @@ io.on('connection', (socket) => {
         socket.broadcast.to(participant.room).emit('system_message', formatSystemMessage(`${username} has joined the party`))
         
         //sends current list of users in roo to client
-        io.to(participant.room).emit('room_participants', {
-            participantList: getParticipntsInRoom(participant.room)
+        io.to(participant.room).emit('room_information', {
+            participantList: getRoomParticipants(participant.room),
+            currentVideoPlaying: getRoom(participant.room).videoDetails.currentVideoPlaying
         })
     })
     
@@ -82,16 +88,16 @@ io.on('connection', (socket) => {
 
             //sends current list of users in roo to client
             io.to(participant.room).emit('room_participants', {
-                participantList: getParticipntsInRoom(participant.room)
+                participantList: getRoomParticipants(participant.room)
             })
         }
     })
 
     socket.on('chat_message', (data)=>{
-        // console.log("socket: ", socket.id)
-        const participant = getParticipant(socket.id)
+        // console.log(data)
+        const participant = getParticipant(data.room, socket.id)
         console.log("participant: ", participant)
-        io.to(participant.room).emit("receive_chat_message", formatUserMessage(data));
+        io.to(participant.room).emit("receive_chat_message", formatUserMessage(data.messageData));
     })
 })
 

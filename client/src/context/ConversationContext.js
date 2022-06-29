@@ -18,7 +18,7 @@ export function ConversationPropsProvider({children}){
     const [ chat, setChat ] = useState([]);
     const [ userMessage, setUserMessage ] = useState('');
 
-    const {name} = useContext(ParticipantContext);
+    const {name, room} = useContext(ParticipantContext);
 
     const inputRef = useRef(null);
     
@@ -45,7 +45,7 @@ export function ConversationPropsProvider({children}){
             }
 
             //sends message to server
-            socket.emit('chat_message', messageData);
+            socket.emit('chat_message', {messageData, room});
         }
 
         setUserMessage('');
