@@ -10,6 +10,8 @@ export function useVideoContext(){
 
 export function VideoContextProvider({children}){
 
+    const socket = useSocketContext();
+
     const [playVideo, setPlayVideo] = useState(false);
     const [videoDuration, setVideoDuration] = useState(null);
     const [isSeeking, setIsSeeking] = useState(false);
@@ -30,7 +32,10 @@ export function VideoContextProvider({children}){
     const timeElapsed = (elapsedSeconds) => setSecondsElapsed(elapsedSeconds);
 
     //whenever current time of video changes, seek to that portion of video
-    const handleVideoSeek = (progress) => videoPlayerRef.current.seekTo(currentTime, 'seconds')
+    const handleVideoSeek = (progress) => {
+        if(videoPlayerRef.current) videoPlayerRef.current.seekTo(currentTime, 'seconds')
+    }
+    
 
     const formatTime = (timeValue) => {
         timeValue = Number(timeValue);
@@ -43,6 +48,32 @@ export function VideoContextProvider({children}){
                : !hours && minutes ? minutes + ":" + seconds
                : "0:" + seconds;
     }
+
+    useEffect(()=>{
+
+        if(!socket) return;
+        
+        //when user joins party emit pause message to every one in the party 
+        socket.on('video_pause', ({playVideo})=>{ 
+            setPlayVideo(playVideo); 
+        })
+
+        socket.on('receive_pause_all_videos', (data)=>{ 
+            console.log(data)
+            setPlayVideo(data.playVideo); 
+        })
+
+        socket.on('receive_play_all_videos', (data)=>{ 
+            console.log(data);
+            setPlayVideo(data.playVideo); 
+        })
+
+
+        return () => {
+            socket.off('video_pause');
+        }
+
+    },[socket])
 
     useEffect(()=>{
         handleVideoSeek()
@@ -69,7 +100,7 @@ export function VideoContextProvider({children}){
         handleVideoSeek, videoWrapperRef, secondsElapsed
     };
 
-    // const socket = useSocketContext();
+    
 
     
 

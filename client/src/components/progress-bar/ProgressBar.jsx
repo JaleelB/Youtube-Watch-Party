@@ -6,14 +6,17 @@ import {useVideoContext} from '../../context/VideoContext';
 import './ProgressBar.scss';
 import { VideoSeekSlider } from "react-video-seek-slider";
 import "react-video-seek-slider/styles.css";
+import { useSocketContext } from '../../context/SocketContext';
 
 const ProgressBar = () => {
+
+    const socket = useSocketContext();
 
     const videoProps = useVideoContext();
     const { 
         togglePlay, videoDuration, playVideo, currentTime,
         formatTime, handleClickFullscreen, handleSeekChange,
-        setIsSeeking, secondsElapsed
+        secondsElapsed
     } = videoProps.videoProps;
 
     return(
@@ -24,8 +27,19 @@ const ProgressBar = () => {
                         onClick={togglePlay}
                     >
                         {playVideo ? 
-                            <Pause className="pause-icon icon"/>:
-                            <PlayArrow className="play-icon icon"/>
+                            <Pause 
+                                className="pause-icon icon"
+                                onClick={ ()=>{
+                                    socket.emit("pause_all_videos", {playVideo: false} )
+                                }}
+                            />
+                            :
+                            <PlayArrow 
+                                className="play-icon icon"
+                                onClick= {() => {
+                                    socket.emit("play_all_videos", {playVideo: true}) 
+                                }}
+                            />
                         }
                     </Box>
                     <VideoSeekSlider

@@ -32,9 +32,6 @@ io.on('connection', (socket) => {
     // socket.emit('system_message', formatSystemMessage('You joined the party chat')) 
 
     socket.on('host_room', ({username, currentVideoPlaying}) => {
-
-        console.log(username, currentVideoPlaying)
-
         const hostRoom = socket.handshake.query.id;
         createRoom(hostRoom, currentVideoPlaying);
         const host = createParticipant(socket.id, username, hostRoom, true);
@@ -74,6 +71,9 @@ io.on('connection', (socket) => {
             participantList: getRoomParticipants(participant.room),
             currentVideoPlaying: getRoom(participant.room).videoDetails.currentVideoPlaying
         })
+
+        io.to(participant.room).emit('video_pause', { playVideo: false })
+        
     })
     
 
@@ -99,6 +99,21 @@ io.on('connection', (socket) => {
     socket.on('chat_message', (data)=>{
         const participant = getParticipant(socket.id)
         io.to(participant.room).emit("receive_chat_message", formatUserMessage(data));
+    })
+
+    socket.on('pause_all_videos', (data)=>{
+        console.log("pause data: ", data);
+        const participant = getParticipant(socket.id)
+        io.to(participant.room).emit("receive_pause_all_videos", data);
+        socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} paused the video`));
+        
+    })
+
+    socket.on('play_all_videos', (data)=>{
+        console.log("play data: ", data);
+        const participant = getParticipant(socket.id)
+        io.to(participant.room).emit("receive_play_all_videos", data);
+        socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} played the video`));
     })
 })
 
