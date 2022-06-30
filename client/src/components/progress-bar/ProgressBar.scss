@@ -3,16 +3,16 @@
 #progress-bar{
     position: relative; margin-top: auto; margin-inline: auto;
     width: 95%; min-height: 35px; bottom: 3rem;
-    display: flex; align-items: center; padding-inline: 5px;
+    display: flex; align-items: center; justify-content: space-evenly;
     background-color: $color-grey4; border-radius: 5px;
-    transition: $transition;
+    transition: $transition; padding-inline: 5px;
 
         .icon{ cursor: pointer; }
 
         .play-icon, .pause-icon{ min-width: 20px; min-height: 20px; font-size: 1.3rem;}
 
         .video-actions{
-            min-width: 300px; width: 100%; 
+            position: relative; min-width: 300px; width: 98%; 
             display: flex; align-items: center; 
             justify-content: space-between; gap: 10px;
 
@@ -21,6 +21,6 @@
             }
         }
 
-        .video-timestamp{ font-family: $ft-sans; font-size: $ft-sm; }
+        .video-timestamp{ width: 8rem; font-family: $ft-sans; font-size: 12px; text-align:center; }
 
 }

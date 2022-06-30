@@ -2,7 +2,7 @@ const rooms = {};
 
 //Layout
 /*
-    Rooms
+    Rooms{
         --> room{
                 --> participants
                 --> videoDetails{
@@ -11,6 +11,7 @@ const rooms = {};
                                 }
                                 
                 }
+        }
 */
 
 function createRoom(roomID, videoPlaying){
@@ -36,7 +37,6 @@ function removeParticipantFromRoom(roomID, id){
     else { return null; }
 
     deleteRoom(roomID);
-    console.log("Delete Rooms update: ", rooms[roomID])
 
 }
 
@@ -50,7 +50,8 @@ function getRoom(roomID){
 }
 
 function deleteRoom(roomID){
-    if(roomID && rooms[roomID].participants.length === 0) delete rooms[roomID]
+    if(roomID && rooms[roomID].participants.length === 0) delete rooms[roomID];
+    console.log("Delete Rooms update: ", rooms[roomID])
 }
 
 module.exports = {

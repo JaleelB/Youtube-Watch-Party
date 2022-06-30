@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import React, {useContext} from 'react';
+import React, {useContext,useRef} from 'react';
 import { ParticipantContext } from '../../context/ParticipantContext';
 import {useVideoContext} from '../../context/VideoContext';
 import './VideoPlayer.scss';
@@ -10,12 +10,20 @@ const VideoPlayer = () => {
 
     const { currentVideoPlaying } = useContext(ParticipantContext);
     const videoProps = useVideoContext();
-    const { playVideo, fullVideo } = videoProps.videoProps
+    const { 
+        playVideo, fullVideo, setDuration, 
+        videoPlayerRef, videoWrapperRef
+    } = videoProps.videoProps
+    
 
     return (
-        <Box className={`video-player ${fullVideo ? 'fullscreen-player' : ''}`}>
+        <Box 
+            className='video-player'
+            ref={videoWrapperRef}
+        >
             <Box className="video-container">
                 <ReactPlayer
+                    ref={videoPlayerRef}
                     className = "video-player"
                     url = {currentVideoPlaying}
                     config={{
@@ -23,6 +31,7 @@ const VideoPlayer = () => {
                     }}
                     controls={false} 
                     playing={playVideo}
+                    onReady={()=> setDuration(videoPlayerRef.current.getDuration())}
                 />
             </Box>
             <ProgressBar/>

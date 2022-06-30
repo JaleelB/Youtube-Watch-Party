@@ -11,8 +11,8 @@ const ProgressBar = () => {
 
     const videoProps = useVideoContext();
     const { 
-        setPlayVideo, setFullVideo, 
-        fullVideo, playVideo
+        togglePlay, videoDuration, playVideo, currentTime,
+        formatTime, handleClickFullscreen, handleCurrentTIme
     } = videoProps.videoProps;
 
     return(
@@ -20,7 +20,7 @@ const ProgressBar = () => {
             
                 <Box className="video-actions">
                     <Box
-                        onClick={()=> setPlayVideo(!playVideo)}
+                        onClick={togglePlay}
                     >
                         {playVideo ? 
                             <Pause className="pause-icon icon"/>:
@@ -28,21 +28,23 @@ const ProgressBar = () => {
                         }
                     </Box>
                     <VideoSeekSlider
-                        max={12000}
-                        currentTime={1700}
+                        max={videoDuration}
+                        currentTime={currentTime}
                         progress={400}
-                        // onChange={(time)=>{
-                        //     this.setState({
-                        //         currentTime:time
-                        //     } as State);
-                        // }}
+                        onChange={(time)=>{
+                            // this.setState({
+                            //     currentTime:time
+                            // } as State);
+                            console.log(time)
+                            handleCurrentTIme(time)
+                        }}
                         offset={0}
                         secondsPrefix="00:00:"
                         minutesPrefix="00:"
                     />
 
-                    <Box className="video-timestamp">1:00:35</Box>
-                    <Fullscreen className="icon" onClick={()=> setFullVideo(!fullVideo)}/>
+                    <Box className="video-timestamp">{formatTime(currentTime) + " / " + formatTime(videoDuration)}</Box>
+                    <Fullscreen className="icon" onClick={handleClickFullscreen}/>
                 </Box>
 
         </Box>
