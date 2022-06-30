@@ -10,12 +10,11 @@ export function useVideoContext(){
 
 export function VideoContextProvider({children}){
 
-    // const [fullVideo, setFullVideo] = useState(false);
     const [playVideo, setPlayVideo] = useState(false);
     const [videoDuration, setVideoDuration] = useState(null);
     const [isSeeking, setIsSeeking] = useState(false);
     const [currentTime, setCurrentTime] = useState(null);
-    // const [secondsElapsed, setSecondsElapsed] = useState(null);
+    const [secondsElapsed, setSecondsElapsed] = useState(null);
 
     const videoPlayerRef = useRef(null);
     const videoWrapperRef = useRef(null);
@@ -26,14 +25,12 @@ export function VideoContextProvider({children}){
     const handleClickFullscreen = () =>  screenfull.toggle(videoWrapperRef.current);
 
     //sets current time of video based on video slider input
-    const handleCurrentTIme = (seconds) => {
-        setCurrentTime(seconds);  
-    }
+    const handleSeekChange = (seconds) =>  setCurrentTime(seconds);  
 
+    const timeElapsed = (elapsedSeconds) => setSecondsElapsed(elapsedSeconds);
 
     //whenever current time of video changes, seek to that portion of video
-    const handleSeek = (progress) => videoPlayerRef.current.seekTo(currentTime, 'seconds')
-    
+    const handleVideoSeek = (progress) => videoPlayerRef.current.seekTo(currentTime, 'seconds')
 
     const formatTime = (timeValue) => {
         timeValue = Number(timeValue);
@@ -47,10 +44,19 @@ export function VideoContextProvider({children}){
                : "0:" + seconds;
     }
 
-    
     useEffect(()=>{
-        handleSeek()
+        handleVideoSeek()
     },[currentTime])
+
+    //gets the seconds played thus far in video  
+    useEffect(()=>{
+
+        const interval = setInterval(() => timeElapsed(videoPlayerRef.current.getCurrentTime()), 1000);
+        return () => {
+            clearInterval(interval);
+        };
+        
+    },[])
 
 
     const videoProps = {
@@ -59,19 +65,11 @@ export function VideoContextProvider({children}){
         videoDuration, setVideoDuration,
         setDuration, formatTime, currentTime,
         videoPlayerRef,isSeeking, setIsSeeking,
-        handleClickFullscreen, handleCurrentTIme,
-        handleSeek, videoWrapperRef
+        handleClickFullscreen, handleSeekChange,
+        handleVideoSeek, videoWrapperRef, secondsElapsed
     };
 
     // const socket = useSocketContext();
-
-    useEffect(()=>{
-        // const pauseVideo = true;
-        // socket.on('join_room', () => {
-        //     socket.emit('video_play_status', pauseVideo)
-        // })
-        console.log("currentTime: ", currentTime)
-    },[currentTime])
 
     
 
@@ -83,6 +81,7 @@ export function VideoContextProvider({children}){
     //]
     //emit for video play
     //emit video timestamp when user joins 
+    //emit current time when user seeks video
 
      return (
         <VideoContext.Provider value={{videoProps}}>

@@ -32,6 +32,7 @@ const VideoPlayer = () => {
                     controls={false} 
                     playing={playVideo}
                     onReady={()=> setDuration(videoPlayerRef.current.getDuration())}
+                    // onProgress={()=> getTimeElapsed(videoPlayerRef.current.getCurrentTime()) }
                 />
             </Box>
             <ProgressBar/>

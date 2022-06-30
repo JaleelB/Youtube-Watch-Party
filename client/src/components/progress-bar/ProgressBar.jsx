@@ -12,7 +12,8 @@ const ProgressBar = () => {
     const videoProps = useVideoContext();
     const { 
         togglePlay, videoDuration, playVideo, currentTime,
-        formatTime, handleClickFullscreen, handleCurrentTIme
+        formatTime, handleClickFullscreen, handleSeekChange,
+        setIsSeeking, secondsElapsed
     } = videoProps.videoProps;
 
     return(
@@ -29,21 +30,18 @@ const ProgressBar = () => {
                     </Box>
                     <VideoSeekSlider
                         max={videoDuration}
-                        currentTime={currentTime}
+                        currentTime={secondsElapsed}
                         progress={400}
                         onChange={(time)=>{
-                            // this.setState({
-                            //     currentTime:time
-                            // } as State);
-                            console.log(time)
-                            handleCurrentTIme(time)
+                            // setIsSeeking(true);
+                            handleSeekChange(time);
                         }}
                         offset={0}
                         secondsPrefix="00:00:"
                         minutesPrefix="00:"
                     />
 
-                    <Box className="video-timestamp">{formatTime(currentTime) + " / " + formatTime(videoDuration)}</Box>
+                    <Box className="video-timestamp">{formatTime(secondsElapsed) + " / " + formatTime(videoDuration)}</Box>
                     <Fullscreen className="icon" onClick={handleClickFullscreen}/>
                 </Box>
 
