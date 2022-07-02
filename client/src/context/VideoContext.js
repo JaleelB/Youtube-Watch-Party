@@ -15,7 +15,7 @@ export function VideoContextProvider({children}){
     const [playVideo, setPlayVideo] = useState(false);
     const [videoDuration, setVideoDuration] = useState(null);
     const [isSeeking, setIsSeeking] = useState(false);
-    const [currentTime, setCurrentTime] = useState(null);
+    const [currentTime, setCurrentTime] = useState(0);
     const [secondsElapsed, setSecondsElapsed] = useState(null);
 
     const videoPlayerRef = useRef(null);
@@ -52,28 +52,43 @@ export function VideoContextProvider({children}){
     useEffect(()=>{
 
         if(!socket) return;
+
+        // if(!playVideo && currentTime) socket.emit("video_timeStamp_on_pause", {currentTime} )
         
         //when user joins party emit pause message to every one in the party 
-        socket.on('video_pause', ({playVideo})=>{ 
+        socket.on('video_pause', ({playVideo, roomTimeStamp})=>{ 
             setPlayVideo(playVideo); 
+            // setCurrentTime(roomTimeStamp);
+            setSecondsElapsed(roomTimeStamp);
         })
 
-        socket.on('receive_pause_all_videos', (data)=>{ 
-            console.log(data)
-            setPlayVideo(data.playVideo); 
+        socket.on('receive_pause_all_videos', ({playStatus, currentTimeStamp})=>{ 
+            setPlayVideo(playStatus); 
+
+            //when user joins party set time to the time thats in the party 
+            // setCurrentTime(currentTimeStamp);
+            setSecondsElapsed(currentTimeStamp);
         })
 
         socket.on('receive_play_all_videos', (data)=>{ 
-            console.log(data);
             setPlayVideo(data.playVideo); 
         })
+
+        // socket.on("receive_timeStamp", (data)=>{ 
+        //     console.log(data)
+        //     setCurrentTime(data); 
+        // })
 
 
         return () => {
             socket.off('video_pause');
+            socket.off('receive_pause_all_videos');
+            socket.off('receive_play_all_videos');
+            // socket.off('receive_timeStamp');
         }
 
-    },[socket])
+    },[socket, playVideo])
+
 
     useEffect(()=>{
         handleVideoSeek()
@@ -81,11 +96,13 @@ export function VideoContextProvider({children}){
 
     //gets the seconds played thus far in video  
     useEffect(()=>{
-
-        const interval = setInterval(() => timeElapsed(videoPlayerRef.current.getCurrentTime()), 1000);
-        return () => {
-            clearInterval(interval);
-        };
+        if(videoPlayerRef.current){
+            const interval = setInterval(() => timeElapsed(videoPlayerRef.current.getCurrentTime()), 1000);
+            return () => {
+                clearInterval(interval);
+            };
+        }
+        
         
     },[])
 

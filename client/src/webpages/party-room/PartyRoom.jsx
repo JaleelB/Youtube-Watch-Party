@@ -5,14 +5,14 @@ import {
      VideoPlayer, ModalPopup
 } from '../../components';
 import './PartyRoom.scss';
-import { AddBox, ArrowDropDown, PeopleOutlineTwoTone, VideoCameraBack } from '@mui/icons-material';
+import { AddBox, PeopleOutlineTwoTone, VideoCameraBack } from '@mui/icons-material';
 import { ParticipantContext } from '../../context/ParticipantContext';
 import { useSocketContext } from '../../context/SocketContext';
 import { useNavigate } from 'react-router-dom';
 
 const PartyRoom = () => {
 
-    const { name, host, room , dispatch, participantList} = useContext(ParticipantContext);
+    const { host, room , dispatch, participantList} = useContext(ParticipantContext);
     const socket = useSocketContext();
     const navigate = useNavigate();
 
@@ -20,12 +20,11 @@ const PartyRoom = () => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const getIdFromURL = () =>{
-            const url = window.location.href.toString().split("/");
-            const roomId = url[url.length - 1];
-            return roomId;
-
-    }
+    // const getIdFromURL = () =>{
+    //         const url = window.location.href.toString().split("/");
+    //         const roomId = url[url.length - 1];
+    //         return roomId;
+    // }
 
     useEffect(()=>{
 
@@ -40,7 +39,7 @@ const PartyRoom = () => {
             socket.off('room_information');
         }
 
-    },[socket])
+    },[socket, host, room])
 
     const handleLeaveRoom = () => navigate('/');
 

@@ -41,12 +41,17 @@ function removeParticipantFromRoom(roomID, id){
 }
 
 function getRoomParticipants(roomID){
-    console.log("get Room Participants: ", rooms[roomID].participants)
-    return rooms[roomID].participants;
+    if(rooms[roomID] && rooms[roomID].participants.length !== 0){
+        console.log("get Room Participants: ", rooms[roomID].participants)
+        return rooms[roomID].participants;
+    }
+    return null;
 }
 
 function getRoom(roomID){
-    return rooms[roomID];
+    if(rooms[roomID]) return rooms[roomID];
+
+    return null;
 }
 
 function deleteRoom(roomID){
@@ -54,10 +59,28 @@ function deleteRoom(roomID){
     console.log("Delete Rooms update: ", rooms[roomID])
 }
 
+function updateRoomVideoTimeStamp(roomID, timeStamp){
+    if(rooms[roomID]){
+        rooms[roomID].videoDetails.currentVideoTimestamp = timeStamp;
+        console.log("Updated TimeStamp: ", rooms[roomID].videoDetails.currentVideoTimestamp);
+    }
+}
+
+function getRoomVideoTimeStamp(roomID){
+    
+    if(rooms[roomID]){
+        console.log("get room timestamp: ", rooms[roomID].videoDetails.currentVideoTimestamp);
+        return rooms[roomID].videoDetails.currentVideoTimestamp;
+    }
+    return null;
+}
+
 module.exports = {
     createRoom,
     addParticipantToRoom,
     getRoomParticipants,
     getRoom,
-    removeParticipantFromRoom
+    removeParticipantFromRoom,
+    updateRoomVideoTimeStamp,
+    getRoomVideoTimeStamp
 }

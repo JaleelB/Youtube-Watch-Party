@@ -30,13 +30,15 @@ const ProgressBar = () => {
                             <Pause 
                                 className="pause-icon icon"
                                 onClick={ ()=>{
-                                    socket.emit("pause_all_videos", {playVideo: false} )
+                                    console.log('pause all videos is fired')
+                                    socket.emit("pause_all_videos", {playVideo: false, timeStamp: secondsElapsed} )
                                 }}
                             />
                             :
                             <PlayArrow 
                                 className="play-icon icon"
                                 onClick= {() => {
+                                    console.log('pause all videos is fired')
                                     socket.emit("play_all_videos", {playVideo: true}) 
                                 }}
                             />

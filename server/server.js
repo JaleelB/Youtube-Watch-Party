@@ -11,7 +11,9 @@ const {
 } = require('./utils/participants');
 const {
     createRoom, getRoomParticipants,
-    getRoom, removeParticipantFromRoom
+    getRoom, removeParticipantFromRoom,
+    updateRoomVideoTimeStamp,
+    getRoomVideoTimeStamp
 } = require('./utils/rooms');
 
 app.use(cors());
@@ -38,7 +40,6 @@ io.on('connection', (socket) => {
 
         socket.join(hostRoom);
 
-
         //welcome message to user
         socket.emit('system_message', formatSystemMessage('You joined the party chat'))
 
@@ -63,16 +64,19 @@ io.on('connection', (socket) => {
         //welcome message to user
         socket.emit('system_message', formatSystemMessage('You joined the party chat'))
 
-        //broadfcast to everyone when a user joins≥
+        //broadfcast to everyone when a user joins
         socket.broadcast.to(participant.room).emit('system_message', formatSystemMessage(`${username} has joined the party`))
         
         //sends current list of users in roo to client
         io.to(participant.room).emit('room_information', {
             participantList: getRoomParticipants(participant.room),
-            currentVideoPlaying: getRoom(participant.room).videoDetails.currentVideoPlaying
+            currentVideoPlaying: getRoom(participant.room) ? getRoom(participant.room).videoDetails.currentVideoPlaying : null
         })
 
-        io.to(participant.room).emit('video_pause', { playVideo: false })
+        io.to(participant.room).emit('video_pause', { 
+            playVideo: false,
+            roomTimeStamp: getRoomVideoTimeStamp(participant.room)
+        })
         
     })
     
@@ -82,15 +86,17 @@ io.on('connection', (socket) => {
         console.log(`User ${socket.id} disconnected`);
 
         const participant = removeParticipantFromList(socket.id);
-        removeParticipantFromRoom(participant.room, socket.id);
 
         if(participant){
+
+            removeParticipantFromRoom(participant.room, socket.id);
+
             io.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} has left the party`))
 
             //sends current list of users in roo to client
             io.to(participant.room).emit('room_information', {
-                participantList: getRoomParticipants(participant.room),
-                currentVideoPlaying: getRoom(participant.room).videoDetails.currentVideoPlaying
+                participantList: getRoomParticipants(participant.room) ? getRoomParticipants(participant.room) : null,
+                currentVideoPlaying: getRoom(participant.room) ? getRoom(participant.room).videoDetails.currentVideoPlaying : null
             })
         }
 
@@ -98,23 +104,39 @@ io.on('connection', (socket) => {
 
     socket.on('chat_message', (data)=>{
         const participant = getParticipant(socket.id)
-        io.to(participant.room).emit("receive_chat_message", formatUserMessage(data));
+         if(participant) io.to(participant.room).emit("receive_chat_message", formatUserMessage(data));
     })
 
     socket.on('pause_all_videos', (data)=>{
-        console.log("pause data: ", data);
         const participant = getParticipant(socket.id)
-        io.to(participant.room).emit("receive_pause_all_videos", data);
-        socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} paused the video`));
+        if(participant){
+            updateRoomVideoTimeStamp(participant.room, data.timeStamp)
+            io.to(participant.room).emit("receive_pause_all_videos", {
+                playStatus: data.playVideo,
+                currentTimeStamp: getRoomVideoTimeStamp(participant.room)
+            });
+            socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} paused the video`));
+        }
         
     })
 
     socket.on('play_all_videos', (data)=>{
-        console.log("play data: ", data);
         const participant = getParticipant(socket.id)
-        io.to(participant.room).emit("receive_play_all_videos", data);
-        socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} played the video`));
+        if(participant){
+            io.to(participant.room).emit("receive_play_all_videos", data);
+            socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} played the video`));
+        }
     })
+
+    // socket.on("video_timeStamp_on_pause", (data)=>{
+    //     const participant = getParticipant(socket.id)
+    //     console.log("timeStamp on pause: ", data.playVideo);
+    //      if(participant){
+    //          io.to(participant.room).emit("receive_timeStamp", data);
+    //      }
+    // })
+
+    
 })
 
 server.listen(process.env.PORT || 4000, () => {

@@ -25,7 +25,7 @@ function createParticipant(id, username, room, host){
 //so user information stored in server can be accessed
 function getParticipant(id){
     const participant = allParticipants.find(participant => participant.id === id);
-    const participantsInRoom = getRoomParticipants(participant.room)
+    const participantsInRoom = participant ? getRoomParticipants(participant.room) : null;
     if(participantsInRoom) return participantsInRoom.find(participant => participant.id === id);
 
     return null;
