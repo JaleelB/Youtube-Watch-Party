@@ -33,7 +33,9 @@ function addParticipantToRoom(roomID, participant){
 function removeParticipantFromRoom(roomID, id){
     const participantInRoom = rooms[roomID].participants.findIndex(participant => participant.id === id);
 
-    if(participantInRoom !== -1) rooms[roomID].participants.splice(participantInRoom, 1)[0];
+    if(participantInRoom !== -1){
+        rooms[roomID].participants.splice(participantInRoom, 1)[0];
+    }
     else { return null; }
 
     deleteRoom(roomID);
@@ -60,10 +62,8 @@ function deleteRoom(roomID){
 }
 
 function updateRoomVideoTimeStamp(roomID, timeStamp){
-    if(rooms[roomID]){
-        if(rooms[roomID].videoDetails.currentVideoTimestamp < timeStamp){
-            rooms[roomID].videoDetails.currentVideoTimestamp = timeStamp;
-        }   
+    if(rooms[roomID] && timeStamp){
+        rooms[roomID].videoDetails.currentVideoTimestamp = timeStamp;   
         console.log("Updated TimeStamp: ", rooms[roomID].videoDetails.currentVideoTimestamp);
     }
 }

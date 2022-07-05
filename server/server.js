@@ -29,10 +29,6 @@ io.on('connection', (socket) => {
 
     console.log(`User ${socket.id} connected`);
 
-    // const hostRoom = socket.handshake.query.id;
-    // socket.join(hostRoom); 
-    // socket.emit('system_message', formatSystemMessage('You joined the party chat')) 
-
     socket.on('host_room', ({username, currentVideoPlaying}) => {
         const hostRoom = socket.handshake.query.id;
         createRoom(hostRoom, currentVideoPlaying);
@@ -73,9 +69,8 @@ io.on('connection', (socket) => {
             currentVideoPlaying: getRoom(participant.room) ? getRoom(participant.room).videoDetails.currentVideoPlaying : null
         })
 
-        io.to(participant.room).emit('video_pause', { 
-            playVideo: false,
-            // roomTimeStamp: getRoomVideoTimeStamp(participant.room)
+        io.to(participant.room).emit('video_pause_on_userJoin', { 
+            playVideo: false
         })
         
     })
@@ -102,35 +97,21 @@ io.on('connection', (socket) => {
 
     })
 
-    socket.on("update_timeStamp_on_userJoin", (data)=>{
+    socket.on('chat_message', (data)=>{
         const participant = getParticipant(socket.id)
-
-         if(participant){
-
-             if(data.timeStamp && data.timeStamp > getRoomVideoTimeStamp(participant.room)){
-                updateRoomVideoTimeStamp(participant.room, data.timeStamp)
-            }
-
-             io.to(participant.room).emit("receive_timeStamp_when_user_joins", {currentTimeStamp: getRoomVideoTimeStamp(participant.room)});
-         }
+         if(participant) io.to(participant.room).emit("receive_chat_message", formatUserMessage(data));
     })
 
     socket.on("update_timeStamp_on_videoSeek", (data)=>{
         const participant = getParticipant(socket.id)
 
          if(participant){
-            //  console.log("time seek: ", data)
-             if(data.elapsedSeconds && data.elapsedSeconds > getRoomVideoTimeStamp(participant.room)){
+             if(data.elapsedSeconds){
                 updateRoomVideoTimeStamp(participant.room, data.elapsedSeconds)
             }
 
              io.to(participant.room).emit("receive_timeStamp_when_video_seeks", {timeStampAfterSeek: getRoomVideoTimeStamp(participant.room)});
          }
-    })
-
-    socket.on('chat_message', (data)=>{
-        const participant = getParticipant(socket.id)
-         if(participant) io.to(participant.room).emit("receive_chat_message", formatUserMessage(data));
     })
 
     socket.on('pause_all_videos', (data)=>{
@@ -148,7 +129,10 @@ io.on('connection', (socket) => {
     socket.on('play_all_videos', (data)=>{
         const participant = getParticipant(socket.id)
         if(participant){
-            io.to(participant.room).emit("receive_play_all_videos", data);
+            io.to(participant.room).emit("receive_play_all_videos", {
+                playStatus: data.playVideo,
+                currentTimeStamp: getRoomVideoTimeStamp(participant.room)
+            });
             socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} played the video`));
         }
     })

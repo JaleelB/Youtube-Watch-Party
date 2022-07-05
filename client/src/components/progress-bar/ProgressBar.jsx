@@ -39,8 +39,6 @@ const ProgressBar = () => {
                                 onClick= {() => {
                                     console.log('play all videos is fired')
                                     socket.emit("play_all_videos", {playVideo: true}) 
-
-                                    //get video time when clicking play button
                                 }}
                             />
                         }

@@ -20,12 +20,6 @@ const PartyRoom = () => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    // const getIdFromURL = () =>{
-    //         const url = window.location.href.toString().split("/");
-    //         const roomId = url[url.length - 1];
-    //         return roomId;
-    // }
-
     useEffect(()=>{
 
         if(!socket) return;
