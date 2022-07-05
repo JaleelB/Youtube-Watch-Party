@@ -19,7 +19,7 @@ function createRoom(roomID, videoPlaying){
         participants: [],
         videoDetails: {
             currentVideoPlaying: videoPlaying || null,
-            currentVideoTimestamp: ''
+            currentVideoTimestamp: 0
         }
     }
     rooms[roomID] = newRoom;
@@ -61,7 +61,9 @@ function deleteRoom(roomID){
 
 function updateRoomVideoTimeStamp(roomID, timeStamp){
     if(rooms[roomID]){
-        rooms[roomID].videoDetails.currentVideoTimestamp = timeStamp;
+        if(rooms[roomID].videoDetails.currentVideoTimestamp < timeStamp){
+            rooms[roomID].videoDetails.currentVideoTimestamp = timeStamp;
+        }   
         console.log("Updated TimeStamp: ", rooms[roomID].videoDetails.currentVideoTimestamp);
     }
 }

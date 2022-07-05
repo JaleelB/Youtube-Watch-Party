@@ -16,27 +16,39 @@ export function VideoContextProvider({children}){
     const [videoDuration, setVideoDuration] = useState(null);
     const [isSeeking, setIsSeeking] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
-    const [secondsElapsed, setSecondsElapsed] = useState(null);
+    const [secondsElapsed, setSecondsElapsed] = useState(0);
 
     const videoPlayerRef = useRef(null);
     const videoWrapperRef = useRef(null);
 
+    //this function sets the total length of the vidoe
     const setDuration = (duration) => setVideoDuration(duration);
+
+    //switches between pause and play states
     const togglePlay = () => setPlayVideo(!playVideo);
- 
+    
+    //makes use of the fullscreen component. makes video wrapper take total viewport width
     const handleClickFullscreen = () =>  screenfull.toggle(videoWrapperRef.current);
 
     //sets current time of video based on video slider input
     const handleSeekChange = (seconds) =>  setCurrentTime(seconds);  
 
+    //sets the amount of seconds that have passed in the video
     const timeElapsed = (elapsedSeconds) => setSecondsElapsed(elapsedSeconds);
 
     //whenever current time of video changes, seek to that portion of video
     const handleVideoSeek = (progress) => {
-        if(videoPlayerRef.current) videoPlayerRef.current.seekTo(currentTime, 'seconds')
+        if(videoPlayerRef.current) videoPlayerRef.current.seekTo(progress, 'seconds')
     }
-    
 
+    // const emitVideoTimeStamp = (elapsedSeconds) => {
+    //     const interval = setInterval(() => socket.emit("update_timeStamp_on_videoSeek", {timeSeek}), 1000);
+    //     return () => {
+    //         clearInterval(interval);
+    //     };
+    // };
+    
+    //takes a time value in seconds and returns it in hr - minute - second format
     const formatTime = (timeValue) => {
         timeValue = Number(timeValue);
 
@@ -49,36 +61,36 @@ export function VideoContextProvider({children}){
                : "0:" + seconds;
     }
 
+    //wjhen participant seeks through video, video timestamp is updated when participant releases mouse
+    const emitTimeOnSeek = (elapsedSeconds) => socket.emit("update_timeStamp_on_videoSeek", {elapsedSeconds})
+
     useEffect(()=>{
 
         if(!socket) return;
-
-        // if(!playVideo && currentTime) socket.emit("video_timeStamp_on_pause", {currentTime} )
         
         //when user joins party emit pause message to every one in the party 
-        socket.on('video_pause', ({playVideo, roomTimeStamp})=>{ 
+        socket.on('video_pause', ({playVideo})=>{ 
             setPlayVideo(playVideo); 
-            // setCurrentTime(roomTimeStamp);
-            setSecondsElapsed(roomTimeStamp);
         })
 
+        //this maybe the problem. when user joins, the event is emitted by the pause button
+        //a new user has zero seconds elapsed so it sets it for all videos
         socket.on('receive_pause_all_videos', ({playStatus, currentTimeStamp})=>{ 
             setPlayVideo(playStatus); 
-
-            //when user joins party set time to the time thats in the party 
-            // setCurrentTime(currentTimeStamp);
+            setCurrentTime(currentTimeStamp);
             setSecondsElapsed(currentTimeStamp);
         })
+
+        //when user seeks video update time
 
         socket.on('receive_play_all_videos', (data)=>{ 
             setPlayVideo(data.playVideo); 
         })
 
-        // socket.on("receive_timeStamp", (data)=>{ 
-        //     console.log(data)
-        //     setCurrentTime(data); 
+        // socket.on('receive_timeStamp_when_user_joins', (data)=>{ 
+        //     setSecondsElapsed(data.currentTimeStamp); 
+        //     handleVideoSeek(data.currentTimeStamp)
         // })
-
 
         return () => {
             socket.off('video_pause');
@@ -91,20 +103,22 @@ export function VideoContextProvider({children}){
 
 
     useEffect(()=>{
-        handleVideoSeek()
+        handleVideoSeek(currentTime)
     },[currentTime])
 
-    //gets the seconds played thus far in video  
+
+    //gets and sets the seconds played thus far in party for video  
     useEffect(()=>{
         if(videoPlayerRef.current){
-            const interval = setInterval(() => timeElapsed(videoPlayerRef.current.getCurrentTime()), 1000);
+            const interval = setInterval(() => {
+                timeElapsed(videoPlayerRef.current.getCurrentTime());
+               emitTimeOnSeek(videoPlayerRef.current.getCurrentTime());
+            }, 1000);
             return () => {
                 clearInterval(interval);
             };
-        }
-        
-        
-    },[])
+        }  
+    },[videoPlayerRef.current])
 
 
     const videoProps = {
@@ -114,22 +128,10 @@ export function VideoContextProvider({children}){
         setDuration, formatTime, currentTime,
         videoPlayerRef,isSeeking, setIsSeeking,
         handleClickFullscreen, handleSeekChange,
-        handleVideoSeek, videoWrapperRef, secondsElapsed
+        handleVideoSeek, videoWrapperRef, secondsElapsed,
+        emitTimeOnSeek
     };
 
-    
-
-    
-
-    //emit for video change when user changes video and emit who chnaged video
-    //emit for video pause - [
-        //when a user joins a party pause a video,
-        //when user presses pause button emit who paused video
-        //emit video timestamp
-    //]
-    //emit for video play
-    //emit video timestamp when user joins 
-    //emit current time when user seeks video
 
      return (
         <VideoContext.Provider value={{videoProps}}>

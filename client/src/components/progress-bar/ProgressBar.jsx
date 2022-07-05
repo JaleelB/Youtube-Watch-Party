@@ -16,7 +16,7 @@ const ProgressBar = () => {
     const { 
         togglePlay, videoDuration, playVideo, currentTime,
         formatTime, handleClickFullscreen, handleSeekChange,
-        secondsElapsed
+        secondsElapsed, emitTimeOnSeek
     } = videoProps.videoProps;
 
     return(
@@ -30,16 +30,17 @@ const ProgressBar = () => {
                             <Pause 
                                 className="pause-icon icon"
                                 onClick={ ()=>{
-                                    console.log('pause all videos is fired')
-                                    socket.emit("pause_all_videos", {playVideo: false, timeStamp: secondsElapsed} )
+                                    socket.emit("pause_all_videos", {playVideo: false} )
                                 }}
                             />
                             :
                             <PlayArrow 
                                 className="play-icon icon"
                                 onClick= {() => {
-                                    console.log('pause all videos is fired')
+                                    console.log('play all videos is fired')
                                     socket.emit("play_all_videos", {playVideo: true}) 
+
+                                    //get video time when clicking play button
                                 }}
                             />
                         }
@@ -51,6 +52,7 @@ const ProgressBar = () => {
                         onChange={(time)=>{
                             // setIsSeeking(true);
                             handleSeekChange(time);
+                            emitTimeOnSeek(time);
                         }}
                         offset={0}
                         secondsPrefix="00:00:"

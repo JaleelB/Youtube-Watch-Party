@@ -75,7 +75,7 @@ io.on('connection', (socket) => {
 
         io.to(participant.room).emit('video_pause', { 
             playVideo: false,
-            roomTimeStamp: getRoomVideoTimeStamp(participant.room)
+            // roomTimeStamp: getRoomVideoTimeStamp(participant.room)
         })
         
     })
@@ -102,6 +102,32 @@ io.on('connection', (socket) => {
 
     })
 
+    socket.on("update_timeStamp_on_userJoin", (data)=>{
+        const participant = getParticipant(socket.id)
+
+         if(participant){
+
+             if(data.timeStamp && data.timeStamp > getRoomVideoTimeStamp(participant.room)){
+                updateRoomVideoTimeStamp(participant.room, data.timeStamp)
+            }
+
+             io.to(participant.room).emit("receive_timeStamp_when_user_joins", {currentTimeStamp: getRoomVideoTimeStamp(participant.room)});
+         }
+    })
+
+    socket.on("update_timeStamp_on_videoSeek", (data)=>{
+        const participant = getParticipant(socket.id)
+
+         if(participant){
+            //  console.log("time seek: ", data)
+             if(data.elapsedSeconds && data.elapsedSeconds > getRoomVideoTimeStamp(participant.room)){
+                updateRoomVideoTimeStamp(participant.room, data.elapsedSeconds)
+            }
+
+             io.to(participant.room).emit("receive_timeStamp_when_video_seeks", {timeStampAfterSeek: getRoomVideoTimeStamp(participant.room)});
+         }
+    })
+
     socket.on('chat_message', (data)=>{
         const participant = getParticipant(socket.id)
          if(participant) io.to(participant.room).emit("receive_chat_message", formatUserMessage(data));
@@ -110,7 +136,6 @@ io.on('connection', (socket) => {
     socket.on('pause_all_videos', (data)=>{
         const participant = getParticipant(socket.id)
         if(participant){
-            updateRoomVideoTimeStamp(participant.room, data.timeStamp)
             io.to(participant.room).emit("receive_pause_all_videos", {
                 playStatus: data.playVideo,
                 currentTimeStamp: getRoomVideoTimeStamp(participant.room)
@@ -127,14 +152,6 @@ io.on('connection', (socket) => {
             socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} played the video`));
         }
     })
-
-    // socket.on("video_timeStamp_on_pause", (data)=>{
-    //     const participant = getParticipant(socket.id)
-    //     console.log("timeStamp on pause: ", data.playVideo);
-    //      if(participant){
-    //          io.to(participant.room).emit("receive_timeStamp", data);
-    //      }
-    // })
 
     
 })
