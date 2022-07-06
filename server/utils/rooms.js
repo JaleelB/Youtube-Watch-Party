@@ -1,3 +1,5 @@
+const {generateRandomNumber} = require('./helper');
+const {formatSystemMessage} = require('./messageFormat');
 const rooms = {};
 
 //Layout
@@ -30,11 +32,29 @@ function addParticipantToRoom(roomID, participant){
         rooms[roomID].participants.push(participant);
 }
 
-function removeParticipantFromRoom(roomID, id){
+function removeParticipantFromRoom(roomID, id, io){
     const participantInRoom = rooms[roomID].participants.findIndex(participant => participant.id === id);
 
     if(participantInRoom !== -1){
-        rooms[roomID].participants.splice(participantInRoom, 1)[0];
+
+        //in the event that the host leaves or is removed from party, a new host is assigned
+        if(rooms[roomID].participants[participantInRoom] && rooms[roomID].participants[participantInRoom].isHost){
+            const newHostIndex = generateRandomNumber(participantInRoom, rooms[roomID].participants.length);
+
+            rooms[roomID].participants[newHostIndex] = {
+                ...rooms[roomID].participants[newHostIndex], 
+                isHost:true
+            }
+
+            io.to(roomID).emit('change_host_participant', {
+                isHost: true,
+                username: rooms[roomID].participants[newHostIndex].username
+            })
+            io.to(roomID).emit('system_message', formatSystemMessage(`${rooms[roomID].participants[newHostIndex].username} is now the new host`))
+        }
+
+        rooms[roomID].participants.splice(participantInRoom, 1)[0];   
+
     }
     else { return null; }
 

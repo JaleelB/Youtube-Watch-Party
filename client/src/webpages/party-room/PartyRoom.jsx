@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 const PartyRoom = () => {
 
-    const { host, room , dispatch, participantList} = useContext(ParticipantContext);
+    const { host, room , dispatch, participantList, name} = useContext(ParticipantContext);
     const socket = useSocketContext();
     const navigate = useNavigate();
 
@@ -29,11 +29,17 @@ const PartyRoom = () => {
             else if(!host && room) dispatch({type: 'update-participant', payload: {participantList, currentVideoPlaying}})
         })
 
+        socket.on('change_host_participant', ({isHost, username})=>{
+            console.log("fired host change")
+            if(name === username) dispatch({type: 'change-host-participant', payload: {isHost}})
+        })
+
         return () => {
             socket.off('room_information');
+            socket.off('change_host_participant');
         }
 
-    },[socket, host, room])
+    },[socket, host, room, name])
 
     const handleLeaveRoom = () => navigate('/');
 

@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
 
         if(participant){
 
-            removeParticipantFromRoom(participant.room, socket.id);
+            removeParticipantFromRoom(participant.room, socket.id, io, socket);
 
             io.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} has left the party`))
 

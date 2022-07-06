@@ -37,7 +37,6 @@ const ProgressBar = () => {
                             <PlayArrow 
                                 className="play-icon icon"
                                 onClick= {() => {
-                                    console.log('play all videos is fired')
                                     socket.emit("play_all_videos", {playVideo: true}) 
                                 }}
                             />
@@ -48,7 +47,6 @@ const ProgressBar = () => {
                         currentTime={secondsElapsed}
                         progress={400}
                         onChange={(time)=>{
-                            // setIsSeeking(true);
                             handleSeekChange(time);
                             emitTimeOnSeek(time);
                         }}
