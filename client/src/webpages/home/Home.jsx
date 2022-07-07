@@ -5,7 +5,9 @@ import { CTAButton } from '../../components';
 import { ParticipantContext } from '../../context/ParticipantContext';
 import { v4 as uuidv4 } from 'uuid';
 import './Home.scss';
-import { useSocketContext } from '../../context/SocketContext';
+import useUrlId from '../../hooks/useUrlId';
+import {useSocketContext} from '../../context/SocketContext';
+import isValidYoutubeLink from '../../helper/isValidYoutubeLink';
 
 const Home = ({setId, id}) => {
 
@@ -15,24 +17,28 @@ const Home = ({setId, id}) => {
     const [joinRoomID, setJoinRoomID] = useState('');
     const [joinFieldEmpty, setJoinFieldEmpty] = useState(false);
     const [hostFieldEmpty, setHostFieldEmpty] = useState(false);
-    const [inValidLink, setInvalidlink] = useState(false);
+    const [invalidLink, setInvalidlink] = useState(false);
 
 
     const socket = useSocketContext();
     const {dispatch} = useContext(ParticipantContext);
     const navigate = useNavigate();
 
+    const { roomId } = useUrlId(joinRoomID);
+    
+
     useEffect(()=>{
         const idRoom = uuidv4()
         setId(idRoom);
     },[]);
 
-    //extracts room id from url
-    const getIdFromURL = () =>{
-            const url = joinRoomID.toString().split("/");
-            const roomId = url[url.length - 1];
-            return roomId;
-    }
+    // useEffect(()=>{
+    //     const valid = isValidYoutubeLink(ytVideoURL);
+
+    //     if(!valid) setInvalidlink(true);
+    //     // else setInvalidlink(true);
+
+    // }, []);
 
     const isJoinFieldEmpty = () => {
         if(participantDisplayName === '' || joinRoomID === ''){
@@ -64,13 +70,14 @@ const Home = ({setId, id}) => {
                 return true;
             }
 
-            if(!inValidLink) setInvalidlink(true);
+            if(!invalidLink) setInvalidlink(true);
             return false;
         }
     }
 
     const submitHostDetails = () => {
         if(isHostFieldEmpty() === false && isValidYoutubeLink()){
+        // if(isHostFieldEmpty() === false && !invalidLink){
             if(hostDisplayName !== '') dispatch({ type: 'create-host-participant', payload: {
                 name: hostDisplayName, roomID: id, currentVideoPlaying: ytVideoURL
             }});
@@ -83,10 +90,13 @@ const Home = ({setId, id}) => {
     const submitParticipantDetails = () => {
         if(isJoinFieldEmpty() === false){
             if(participantDisplayName !== '') dispatch({ type: 'create-participant', payload: {
-                name: participantDisplayName, roomID: getIdFromURL()
+                name: participantDisplayName, roomID: roomId
+                
             }});
-            navigate(`/room/${getIdFromURL()}`);
-            socket.emit('join_room', {username: participantDisplayName, room: getIdFromURL()} );
+            navigate(`/room/${roomId}`);
+            socket.emit('join_room', {
+                username: participantDisplayName, room: roomId
+            } );
         }
     };
 
@@ -173,7 +183,8 @@ const Home = ({setId, id}) => {
                     />
                 </Box>
 
-                {inValidLink && <span className="invalid-message">Invalid Youtube Link</span>}
+                {/* {inValidLink && <span className="invalid-message">Invalid Youtube Link</span>} */}
+                {invalidLink && <span className="invalid-message">Invalid Youtube Link</span>}
                 
                 <Box className="input">
                     <label htmlFor="video-link" className="input-label">YouTube Video Link</label>

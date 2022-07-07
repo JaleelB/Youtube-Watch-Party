@@ -84,17 +84,21 @@ function deleteRoom(roomID){
 function updateRoomVideoTimeStamp(roomID, timeStamp){
     if(rooms[roomID] && timeStamp){
         rooms[roomID].videoDetails.currentVideoTimestamp = timeStamp;   
-        console.log("Updated TimeStamp: ", rooms[roomID].videoDetails.currentVideoTimestamp);
     }
 }
 
 function getRoomVideoTimeStamp(roomID){
     
     if(rooms[roomID]){
-        console.log("get room timestamp: ", rooms[roomID].videoDetails.currentVideoTimestamp);
         return rooms[roomID].videoDetails.currentVideoTimestamp;
     }
     return null;
+}
+
+function updateRoomVideoPlaying(roomID, videoURL){
+    if(rooms[roomID] && videoURL){
+        rooms[roomID].videoDetails.currentVideoPlaying = videoURL;   
+    }
 }
 
 module.exports = {

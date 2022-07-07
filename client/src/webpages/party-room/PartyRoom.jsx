@@ -16,9 +16,11 @@ const PartyRoom = () => {
     const socket = useSocketContext();
     const navigate = useNavigate();
 
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const [open, setOpen] = useState({
+        nameModal: false,
+        inviteModal: false,
+        changeVideoModal: false,
+    });
 
     useEffect(()=>{
 
@@ -30,7 +32,6 @@ const PartyRoom = () => {
         })
 
         socket.on('change_host_participant', ({isHost, username})=>{
-            console.log("fired host change")
             if(name === username) dispatch({type: 'change-host-participant', payload: {isHost}})
         })
 
@@ -41,33 +42,59 @@ const PartyRoom = () => {
 
     },[socket, host, room, name])
 
+    useEffect(()=>{
+
+        if(!room && !name) setOpen({...open, nameModal: true});
+
+    },[room, name])
+
     const handleLeaveRoom = () => navigate('/');
 
     return(
         <Box id="party-room">
 
-            {/* <NameModal/> */}
-
             <HeaderBar/>
             <Box className="inner">
 
-                { open && 
+                { open.inviteModal && !open.nameModal && !open.changeVideoModal &&
                     <ModalPopup
-                        open={open}
-                        handleClose={handleClose}
+                        open={open.inviteModal}
+                        handleClose={()=>{
+                            setOpen({...open, inviteModal: false});
+                        }}
+                        modalType={'invite-modal'}
                         text = {window.location.href}
                         ctaText = {'Copy link'}
                         title = {'Copy the link to share invite'}
                     /> 
                 }
 
-                { room === null &&
+                { open.nameModal && !open.inviteModal && !open.changeVideoModal && 
                     <ModalPopup
-                        open={open}
-                        handleClose={handleClose}
-                        // text = {window.location.href}
-                        ctaText = {'Submit Display Name'}
+                        open={open.nameModal}
+                        handleClose={()=>{
+                            setOpen({...open, nameModal: false});
+                        }}
+                        buttonFunction = {()=>{
+                            setOpen({...open, nameModal: false});
+                        }}
+                        modalType={'name-modal'}
+                        ctaText = {'Submit Name'}
                         title = {'Enter Display Name'}
+                        usesInput={true}
+                    /> 
+                }
+
+                { open.changeVideoModal && !open.inviteModal && !open.nameModal &&
+                    <ModalPopup
+                        open={open.changeVideoModal}
+                        handleClose={()=>{
+                            setOpen({...open, changeVideoModal: false});
+                        }}
+                        modalType={'video-modal'}
+                        ctaText = {'Submit Link'}
+                        title = {'Enter Valid Youtube Video Link'}
+                        usesInput={true}
                     /> 
                 }
                 
@@ -92,8 +119,24 @@ const PartyRoom = () => {
                     </Box>
 
                     <Box className="cta-btn-wrapper">
-                        <CTAButton text="Change Video" classname="inverted" component={<VideoCameraBack/>}/>
-                        <CTAButton text="Invite" classname="inverted" component={<AddBox/>} buttonFunction={handleOpen}/>
+                        <CTAButton 
+                            text="Change Video"
+                            classname="inverted"
+                            component={<VideoCameraBack/>}
+                            buttonFunction={()=>{
+                                setOpen({...open, changeVideoModal: true});
+                            }}
+                        />
+
+                        <CTAButton 
+                            text="Invite" 
+                            classname="inverted" 
+                            component={<AddBox/>} 
+                            buttonFunction={()=>{
+                                // handleInviteOpen
+                                setOpen({...open, inviteModal: true});
+                            }}
+                        />
                     </Box>
                     
                 </Box>

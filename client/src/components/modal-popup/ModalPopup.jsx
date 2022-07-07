@@ -1,35 +1,56 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Box, Modal} from '@mui/material';
 import {CTAButton} from '../../components';
+import isValidYoutubeLink from '../../helper/isValidYoutubeLink';
+import { useSocketContext } from '../../context/SocketContext';
+import './ModalPopup.scss';
 
-const style = { 
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: "translate(-50%, -50%)",
-    bgcolor: '#272727',
-    width: '90%',
-    maxWidth: 400,
-    p: 4,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '10px',
-    textAlign: 'center'
+const ModalPopup = ({open, handleClose, text, ctaText, title, usesInput, modalType}) => {
 
-};
+  const[inputText, setInputText] = useState('');
+  const[error, setError] = useState('');
 
+  const socket = useSocketContext();
 
-const ModalPopup = ({open, handleClose, text, ctaText, title}) => {
   return (
     <Modal
         open={open}
         onClose={handleClose}
     >
-        <Box className="modal-inner" sx={style}>
+        <Box className="modal-inner" >
             <h2>{title}</h2>
-            <p>{text}</p>
-            <CTAButton text={ctaText} buttonFunction={handleClose}/>
+            {text && <p>{text}</p>}
+            { 
+              usesInput && 
+                <input 
+                  className="text-value-input"
+                  onChange={(e)=> setInputText(e.target.value)}
+                />
+            }
+
+            { 
+              usesInput && error &&
+                <span className="error-message">{error}</span>
+            }
+            <CTAButton 
+              text={ctaText} 
+              buttonFunction={()=>{
+                
+                if(modalType === 'invite-modal'){
+                  navigator.clipboard.writeText(text)
+                  handleClose();
+                }
+
+                if(modalType === 'video-modal'){
+                    const validLink = isValidYoutubeLink(inputText)
+                    if(!validLink) setError('Invalid Youtube Link');
+                    else {
+                      socket.emit('change_video_playing', {newVideo: inputText})
+                      handleClose();
+                    }
+                }
+              }}
+            />
         </Box>  
     </Modal>
   )
