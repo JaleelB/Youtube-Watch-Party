@@ -1,5 +1,5 @@
 import { Box, Link } from '@mui/material';
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CTAButton } from '../../components';
 import { ParticipantContext } from '../../context/ParticipantContext';
@@ -26,19 +26,11 @@ const Home = ({setId, id}) => {
 
     const { roomId } = useUrlId(joinRoomID);
     
-
     useEffect(()=>{
         const idRoom = uuidv4()
         setId(idRoom);
     },[]);
 
-    // useEffect(()=>{
-    //     const valid = isValidYoutubeLink(ytVideoURL);
-
-    //     if(!valid) setInvalidlink(true);
-    //     // else setInvalidlink(true);
-
-    // }, []);
 
     const isJoinFieldEmpty = () => {
         if(participantDisplayName === '' || joinRoomID === ''){
@@ -79,7 +71,7 @@ const Home = ({setId, id}) => {
         if(isHostFieldEmpty() === false && isValidYoutubeLink()){
         // if(isHostFieldEmpty() === false && !invalidLink){
             if(hostDisplayName !== '') dispatch({ type: 'create-host-participant', payload: {
-                name: hostDisplayName, roomID: id, currentVideoPlaying: ytVideoURL
+                name: hostDisplayName, roomID: id, currentVideoPlaying: ytVideoURL 
             }});
             navigate(`/room/${id}`);
             // socket.emit('join_room', {username: hostDisplayName, room: id, isHost: true} );

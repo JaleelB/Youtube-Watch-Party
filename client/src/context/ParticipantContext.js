@@ -19,6 +19,20 @@ export const ParticipantContextProvider = ({children}) => {
 
     const socket = useSocketContext();
 
+    useEffect(()=>{
+
+        if(!socket) return;
+
+        socket.on('change_host_participant', ({isHost, username})=>{
+            if(state.name === username) dispatch({type: 'change-host-participant', payload: {isHost}})
+        })
+
+        return () => {
+            socket.off('change_host_participant');
+        }
+
+    },[socket, state.name, dispatch])
+
     //saves user informaton after login to prevent losing it when refreshing
     useEffect(() => {
         // if(state.host === true){

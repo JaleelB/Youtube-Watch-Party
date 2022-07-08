@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 const PartyRoom = () => {
 
-    const { host, room , dispatch, participantList, name} = useContext(ParticipantContext);
+    const { room , dispatch, participantList, name} = useContext(ParticipantContext);
     const socket = useSocketContext();
     const navigate = useNavigate();
 
@@ -22,31 +22,34 @@ const PartyRoom = () => {
         changeVideoModal: false,
     });
 
+    //listens for any changes to room user or video information
+    //if there are changes, update state with changes
     useEffect(()=>{
 
         if(!socket) return;
 
         socket.on('room_information', ({participantList, currentVideoPlaying})=>{
-            if(host) dispatch({type: 'update-host-participant', payload: {participantList, currentVideoPlaying}})
-            else if(!host && room) dispatch({type: 'update-participant', payload: {participantList, currentVideoPlaying}})
-        })
 
-        socket.on('change_host_participant', ({isHost, username})=>{
-            if(name === username) dispatch({type: 'change-host-participant', payload: {isHost}})
+            if(room){
+                dispatch({type: 'update-participant-list', payload: {participantList}})
+                dispatch({type: 'update-participant-video', payload: {currentVideoPlaying}})
+            }
         })
 
         return () => {
             socket.off('room_information');
-            socket.off('change_host_participant');
         }
 
-    },[socket, host, room, name])
+    },[socket, room, dispatch])
 
+    //checks if roomid and username exists in state, if not allow 
+    //user to enter name and allow them to joinroom
     useEffect(()=>{
 
-        if(!room && !name) setOpen({...open, nameModal: true});
+        // if(participantList.length === 0 && !name) setOpen({...open, nameModal: true});
 
-    },[room, name])
+    },[participantList, name, open])
+
 
     const handleLeaveRoom = () => navigate('/');
 

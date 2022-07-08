@@ -101,6 +101,12 @@ function updateRoomVideoPlaying(roomID, videoURL){
     }
 }
 
+function getRoomVideoPlaying(roomID){
+    if(rooms[roomID]) return rooms[roomID].videoDetails.currentVideoPlaying;   
+    
+    return null;
+}
+
 module.exports = {
     createRoom,
     addParticipantToRoom,
@@ -108,5 +114,7 @@ module.exports = {
     getRoom,
     removeParticipantFromRoom,
     updateRoomVideoTimeStamp,
-    getRoomVideoTimeStamp
+    getRoomVideoTimeStamp,
+    updateRoomVideoPlaying,
+    getRoomVideoPlaying
 }

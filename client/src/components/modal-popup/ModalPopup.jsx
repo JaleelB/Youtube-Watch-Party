@@ -3,12 +3,15 @@ import {Box, Modal} from '@mui/material';
 import {CTAButton} from '../../components';
 import isValidYoutubeLink from '../../helper/isValidYoutubeLink';
 import { useSocketContext } from '../../context/SocketContext';
+import useUrlId from '../../hooks/useUrlId';
 import './ModalPopup.scss';
 
 const ModalPopup = ({open, handleClose, text, ctaText, title, usesInput, modalType}) => {
 
   const[inputText, setInputText] = useState('');
   const[error, setError] = useState('');
+
+  const { roomId } = useUrlId(window.location.href);
 
   const socket = useSocketContext();
 
@@ -48,6 +51,15 @@ const ModalPopup = ({open, handleClose, text, ctaText, title, usesInput, modalTy
                       socket.emit('change_video_playing', {newVideo: inputText})
                       handleClose();
                     }
+                }
+
+                if(modalType === 'name-modal'){
+                  if(inputText){
+                    socket.emit('join_room', { username: inputText, room: roomId });
+                    handleClose();
+                  }else{
+                    setError('Enter a name.');
+                  }
                 }
               }}
             />

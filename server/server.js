@@ -12,8 +12,8 @@ const {
 const {
     createRoom, getRoomParticipants,
     getRoom, removeParticipantFromRoom,
-    updateRoomVideoTimeStamp,
-    getRoomVideoTimeStamp
+    updateRoomVideoTimeStamp, getRoomVideoPlaying,
+    getRoomVideoTimeStamp, updateRoomVideoPlaying
 } = require('./utils/rooms');
 
 app.use(cors());
@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
         //sends current list of users in roo to client
         io.to(participant.room).emit('room_information', {
             participantList: getRoomParticipants(participant.room),
-            currentVideoPlaying: getRoom(participant.room) ? getRoom(participant.room).videoDetails.currentVideoPlaying : null
+            currentVideoPlaying: getRoomVideoPlaying(participant.room)
         })
 
         io.to(participant.room).emit('video_pause_on_userJoin', { 
@@ -91,7 +91,7 @@ io.on('connection', (socket) => {
             //sends current list of users in roo to client
             io.to(participant.room).emit('room_information', {
                 participantList: getRoomParticipants(participant.room) ? getRoomParticipants(participant.room) : null,
-                currentVideoPlaying: getRoom(participant.room) ? getRoom(participant.room).videoDetails.currentVideoPlaying : null
+                currentVideoPlaying: getRoomVideoPlaying(participant.room)
             })
         }
 
@@ -134,6 +134,18 @@ io.on('connection', (socket) => {
                 currentTimeStamp: getRoomVideoTimeStamp(participant.room)
             });
             socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} played the video`));
+        }
+    })
+
+    socket.on('change_video_playing', (data)=>{
+        const participant = getParticipant(socket.id)
+        if(participant){
+            updateRoomVideoPlaying(participant.room, data.newVideo);
+            console.log("vid link new: ", data.newVideo)
+            io.to(participant.room).emit("update_video_playing", {
+                newVideo: getRoomVideoPlaying(participant.room)
+            });
+            socket.to(participant.room).emit('system_message', formatSystemMessage(`${participant.username} changed the video`));
         }
     })
 

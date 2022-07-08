@@ -13,7 +13,7 @@ export function VideoContextProvider({children}){
 
     const socket = useSocketContext();
 
-    const { host } = useContext(ParticipantContext);
+    const { host, dispatch } = useContext(ParticipantContext);
 
     const [playVideo, setPlayVideo] = useState(false);
     const [videoDuration, setVideoDuration] = useState(null);
@@ -75,6 +75,11 @@ export function VideoContextProvider({children}){
             setPlayVideo(playStatus); 
             setSecondsElapsed(currentTimeStamp);
             handleVideoSeek(currentTimeStamp)
+        })
+
+        //updates the current video link in state after some one in party changes video
+        socket.on('update_video_playing', ({newVideo})=>{ 
+            dispatch({type: 'update-participant-video', payload: {currentVideoPlaying: newVideo}})
         })
 
         //gets the party timeStamp when participant plays video
