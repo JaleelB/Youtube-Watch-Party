@@ -95,7 +95,7 @@ export function VideoContextProvider({children}){
             socket.off('receive_play_all_videos');
         }
 
-    },[socket, playVideo])
+    },[socket, playVideo, dispatch])
 
 
     useEffect(()=>{
@@ -116,7 +116,7 @@ export function VideoContextProvider({children}){
                 clearInterval(interval);
             };
         }  
-    },[videoPlayerRef.current, host])
+    },[videoPlayerRef.current, host, playVideo, emitTimeOnSeek])
 
 
     const videoProps = {

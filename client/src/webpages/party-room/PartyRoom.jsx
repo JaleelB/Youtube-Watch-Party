@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 const PartyRoom = () => {
 
-    const { room , dispatch, participantList, name} = useContext(ParticipantContext);
+    const { room , dispatch, participantList, currentVideoPlaying, name} = useContext(ParticipantContext);
     const socket = useSocketContext();
     const navigate = useNavigate();
 
@@ -42,16 +42,37 @@ const PartyRoom = () => {
 
     },[socket, room, dispatch])
 
-    //checks if roomid and username exists in state, if not allow 
+    //checks if roomid exists in state, if not allow 
     //user to enter name and allow them to joinroom
     useEffect(()=>{
 
-        if(participantList.length === 0 && !name) setOpen({...open, nameModal: true});
-        else{
-            setOpen({...open, nameModal: false});
+        if(name === null) setOpen({...open, nameModal: true});
+
+    },[name])
+
+    useEffect(()=>{
+
+        if(!socket) return;
+        
+        if (window.performance) {
+            if (performance.navigation.type === 1) {
+
+                //if participant is the only person in the room, which automatically makes them host
+                //the room will be recreated upon refresh with the previous room information as the room gets 
+                //deleted upon refresh
+              if(participantList.length === 1){
+                socket.emit('host_room', {
+                    username: name, currentVideoPlaying
+                });
+              }else{
+                socket.emit('join_room', {
+                    username: name, room: room
+                });
+              }
+            }
         }
 
-    },[participantList, name, open])
+    },[socket])
 
 
     const handleLeaveRoom = () => navigate('/');
@@ -111,7 +132,6 @@ const PartyRoom = () => {
                                 <PeopleOutlineTwoTone/>
                             </h2>
                             <span className="participant-count">{participantList.length}</span>
-                            {/* <ArrowDropDown/> */}
                         </Box>
                         <CTAButton text="Leave Room" buttonFunction={handleLeaveRoom}/>
                     </Box>
@@ -139,7 +159,6 @@ const PartyRoom = () => {
                             classname="inverted" 
                             component={<AddBox/>} 
                             buttonFunction={()=>{
-                                // handleInviteOpen
                                 setOpen({...open, inviteModal: true});
                             }}
                         />

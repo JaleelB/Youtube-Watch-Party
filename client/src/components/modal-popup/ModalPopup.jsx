@@ -8,7 +8,7 @@ import useUrlId from '../../hooks/useUrlId';
 
 import './ModalPopup.scss';
 
-const ModalPopup = ({open, handleClose, text, ctaText, title, usesInput, modalType}) => {
+const ModalPopup = ({open, handleClose, text, ctaText, title, usesInput, modalType, buttonFunction}) => {
 
   const[inputText, setInputText] = useState('');
   const[error, setError] = useState('');
@@ -60,6 +60,7 @@ const ModalPopup = ({open, handleClose, text, ctaText, title, usesInput, modalTy
                   if(inputText){
                     dispatch({ type: 'create-participant', payload: { name: inputText, roomID: roomId}})
                     socket.emit('join_room', { username: inputText, room: roomId });
+                    buttonFunction();
                     handleClose();
                   }else{
                     setError('Enter a name.');

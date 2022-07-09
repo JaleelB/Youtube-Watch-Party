@@ -37,23 +37,28 @@ function removeParticipantFromRoom(roomID, id, io){
 
     if(participantInRoom !== -1){
 
-        //in the event that the host leaves or is removed from party, a new host is assigned
-        if(rooms[roomID].participants[participantInRoom] && rooms[roomID].participants[participantInRoom].isHost){
-            const newHostIndex = generateRandomNumber(participantInRoom, rooms[roomID].participants.length);
+        let hostHasBeenRemoved;
 
-            rooms[roomID].participants[newHostIndex] = {
-                ...rooms[roomID].participants[newHostIndex], 
+        if(rooms[roomID].participants[participantInRoom] && rooms[roomID].participants[participantInRoom].isHost){
+            hostHasBeenRemoved = true;
+        }
+
+        rooms[roomID].participants.splice(participantInRoom, 1)[0];   
+
+        //in the event that the host leaves or is removed from party, a new host is assigned
+        if(hostHasBeenRemoved && rooms[roomID].participants.length > 0){
+
+            rooms[roomID].participants[0] = {
+                ...rooms[roomID].participants[0], 
                 isHost:true
             }
 
             io.to(roomID).emit('change_host_participant', {
                 isHost: true,
-                username: rooms[roomID].participants[newHostIndex].username
+                username: rooms[roomID].participants[0].username
             })
-            io.to(roomID).emit('system_message', formatSystemMessage(`${rooms[roomID].participants[newHostIndex].username} is now the new host`))
+            io.to(roomID).emit('system_message', formatSystemMessage(`${rooms[roomID].participants[0].username} is now the new host`))
         }
-
-        rooms[roomID].participants.splice(participantInRoom, 1)[0];   
 
     }
     else { return null; }
@@ -83,7 +88,8 @@ function deleteRoom(roomID){
 
 function updateRoomVideoTimeStamp(roomID, timeStamp){
     if(rooms[roomID] && timeStamp){
-        rooms[roomID].videoDetails.currentVideoTimestamp = timeStamp;   
+        rooms[roomID].videoDetails.currentVideoTimestamp = timeStamp; 
+        console.log("Updated Video TimeStamp: ", timeStamp)  
     }
 }
 
