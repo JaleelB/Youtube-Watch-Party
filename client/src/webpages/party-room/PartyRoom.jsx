@@ -46,7 +46,10 @@ const PartyRoom = () => {
     //user to enter name and allow them to joinroom
     useEffect(()=>{
 
-        // if(participantList.length === 0 && !name) setOpen({...open, nameModal: true});
+        if(participantList.length === 0 && !name) setOpen({...open, nameModal: true});
+        else{
+            setOpen({...open, nameModal: false});
+        }
 
     },[participantList, name, open])
 

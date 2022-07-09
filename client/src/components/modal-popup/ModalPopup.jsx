@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Box, Modal} from '@mui/material';
 import {CTAButton} from '../../components';
 import isValidYoutubeLink from '../../helper/isValidYoutubeLink';
 import { useSocketContext } from '../../context/SocketContext';
+import { ParticipantContext } from '../../context/ParticipantContext';
 import useUrlId from '../../hooks/useUrlId';
+
 import './ModalPopup.scss';
 
 const ModalPopup = ({open, handleClose, text, ctaText, title, usesInput, modalType}) => {
@@ -12,6 +14,7 @@ const ModalPopup = ({open, handleClose, text, ctaText, title, usesInput, modalTy
   const[error, setError] = useState('');
 
   const { roomId } = useUrlId(window.location.href);
+  const {dispatch} = useContext(ParticipantContext);
 
   const socket = useSocketContext();
 
@@ -55,6 +58,7 @@ const ModalPopup = ({open, handleClose, text, ctaText, title, usesInput, modalTy
 
                 if(modalType === 'name-modal'){
                   if(inputText){
+                    dispatch({ type: 'create-participant', payload: { name: inputText, roomID: roomId}})
                     socket.emit('join_room', { username: inputText, room: roomId });
                     handleClose();
                   }else{
