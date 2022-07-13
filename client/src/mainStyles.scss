@@ -43,6 +43,7 @@ $ft-heading: 1.6rem;
 $ft-small-title: clamp(10px, 5vw, 16px);
 $ft-large-title: clamp(40px, 8vw, 90px);
 $ft-subtitle: clamp(16px, 5vw, $ft-heading);
+$ft-small-heading: clamp(13px, 5vw, 1.1rem);
 
 
 *, *::before, *::after{ 
@@ -50,7 +51,7 @@ $ft-subtitle: clamp(16px, 5vw, $ft-heading);
     box-sizing: border-box;
 }
 
-html{ overflow-x: hidden;}
+html{ overflow-x: hidden; scroll-behavior: smooth; }
 
 body{
     width: 100%; min-height: 100%; 

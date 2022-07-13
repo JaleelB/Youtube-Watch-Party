@@ -6,8 +6,18 @@
     padding-inline: 15px; background-color: $color-grey4;
     font-family: $ft-sans; border-bottom: 1px solid $color-grey1;
     
-    .app-title{
-        font-weight: 500; font-size: clamp(12px, 5vw, 20px);
+    .logo-wrapper{
+        font-weight: 500; 
+        padding-bottom: .5rem;
+
+        .text-1,
+        .text-2{ font-size: 1rem; transform: rotate(-10deg);}
+
+        .text-2{
+            margin-left: 1rem; margin-top: -.6rem;
+
+            @media screen and(max-width: 500px){ margin-top: -.7rem; }
+        }
     }
 
     .host-details{

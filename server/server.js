@@ -20,8 +20,10 @@ app.use(cors());
 
 const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000", //client is on different url so this specifies location of client
-      methods: ["GET", "POST"], //specifies methods that cors should allow to go through to our client
+    //   origin: "http://localhost:3000", //client is on different url so this specifies location of client
+        origin: ['https://ytblockwatch.netlify.app'],
+        // methods: ["GET", "POST"], //specifies methods that cors should allow to go through to our client
+        serveClient: false
     },
 });
 
@@ -141,7 +143,6 @@ io.on('connection', (socket) => {
         const participant = getParticipant(socket.id)
         if(participant){
             updateRoomVideoPlaying(participant.room, data.newVideo);
-            console.log("vid link new: ", data.newVideo)
             io.to(participant.room).emit("update_video_playing", {
                 newVideo: getRoomVideoPlaying(participant.room)
             });
@@ -151,6 +152,10 @@ io.on('connection', (socket) => {
 
     
 })
+
+app.get('/', (req, res, next) => {
+	res.send('Hello World');
+});
 
 server.listen(process.env.PORT || 4000, () => {
     console.log("SERVER Is RUNNING");

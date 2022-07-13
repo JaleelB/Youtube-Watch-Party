@@ -54,10 +54,19 @@
         }
     }
 
-    .cta-btn, .inverted{
-        padding: .3rem 1.75rem; min-height: 40px !important;
+    .link, .inverted{
+        padding: 1rem 1.75rem; min-height: 40px !important;
         line-height: 1; font-family: $ft-monument-extended; min-width: 230px;
         text-transform: uppercase; font-weight: 400;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: $border-radius; cursor: pointer; text-decoration: none;
+        color: $primary-red; margin-inline: auto;
+
+        @media screen and (max-width: 400px){ padding: .5rem 1.75rem;}
+    }
+
+    .link{
+        background-color: $primary-red; color: $primary-text-color;
     }
 
     .hero{
@@ -128,7 +137,8 @@
         }
     }
 
-    .host-section, .join-section{
+    #host-section, 
+    #join-section{
         display: flex; flex-direction: column;
         justify-content: center; align-items: center;
 

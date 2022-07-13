@@ -10,7 +10,8 @@ const HeaderBar = () => {
     return(
         <Box id='header-bar'>
             <Box className="logo-wrapper">
-                <h1 className="app-title"> Block Watch </h1>
+                <h2 className="text-1">block</h2>
+                <h2 className="text-2">watch</h2>
             </Box>
             <Box className="host-details">
                 <Avatar className="profile-icon"/>

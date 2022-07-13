@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CTAButton } from '../../components';
 import { ParticipantContext } from '../../context/ParticipantContext';
+import { useConversationContext } from '../../context/ConversationContext';
 import { v4 as uuidv4 } from 'uuid';
 import './Home.scss';
 import useUrlId from '../../hooks/useUrlId';
@@ -103,8 +104,8 @@ const Home = ({setId, id}) => {
                 <h2 className="header-text text-2">watch</h2>
             </Box>
 
-            <Link className="begin">Begin</Link>
-            <Link className="get-started">Get Started</Link>
+            <Link className="begin" href='#host-section'>Begin</Link>
+            <Link className="get-started" href='#host-section'>Get Started</Link>
             
         </Box>
 
@@ -114,7 +115,7 @@ const Home = ({setId, id}) => {
         </Box>
         
         <Box>
-            <h2 className="hero-app-title">Youtube</h2>
+            <h2 className="hero-app-title">YT</h2>
 
                 <p className="supplemental-message subheadline-1">
                     We are a tool friends and family can stream YouTube 
@@ -134,15 +135,15 @@ const Home = ({setId, id}) => {
         </Box>
 
         <Box className="cta-button-wrapper">
-            <CTAButton text="Host Party"/>
-            <CTAButton text="Join Party" classname="inverted"/>
+            <Link className="link" href='#host-section'>Host Party</Link>
+            <Link className="inverted" href='#join-section'>Join Party </Link>
         </Box>
 
       </section>
 
 
     
-      <section className="host-section">
+      <section id="host-section">
         <Box className="text-wrapper">
             <h2 className="subtitle-text">
                 <span>host</span>
@@ -197,7 +198,7 @@ const Home = ({setId, id}) => {
         </Box>
       </section>
 
-      <section className="join-section">
+      <section id="join-section">
         <Box className="text-wrapper">
             <h2 className="subtitle-text">
                 <span>join</span>

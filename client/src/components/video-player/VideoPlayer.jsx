@@ -4,11 +4,12 @@ import { ParticipantContext } from '../../context/ParticipantContext';
 import {useVideoContext} from '../../context/VideoContext';
 import './VideoPlayer.scss';
 import {ProgressBar} from '../../components';
-import ReactPlayer from 'react-player'
+import ReactPlayer from 'react-player';
 
 const VideoPlayer = () => {
 
     const { currentVideoPlaying } = useContext(ParticipantContext);
+    
     const videoProps = useVideoContext();
     const { 
         playVideo, fullVideo, setDuration, 

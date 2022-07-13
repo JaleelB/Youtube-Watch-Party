@@ -47,17 +47,31 @@
             .inverted{ margin-left: auto; padding: 2px 10px; }
 
             .video-details{
-                @media screen and (min-width: 400px) {margin-top: 20px; }
-                .video-name{ font-weight: 600;}
-                .author-title{ font-weight: 400; font-size: $ft-small-title; }
+                display: none;
+                @media screen and (min-width: 750px) {display: block; margin-top: 20px; }
+
+                .video-name{ 
+                    font-weight: 600; font-size: 13px;
+                    @media screen and (min-width: 750px) {
+                        font-size: $ft-small-heading;
+                    }
+                }
+
+                .video-channel{ 
+                    @media screen and (min-width: 750px) {
+                        font-weight: 400; 
+                        font-size: 14px; margin-top: 3px;
+                    }
+                }
             }
         }
 
         .cta-btn-wrapper{
+            position: relative; 
             display: flex; justify-content: space-between;
-            margin-top: 1rem;
+            margin-top: 1rem; bottom: 0;
 
-            @media screen and (max-width: 400px){ margin-top: .5rem; }
+            @media screen and (max-width: 750px){ margin-top: auto; }
             .inverted{ 
                 margin: 0; width: auto; 
                 padding: 7px;

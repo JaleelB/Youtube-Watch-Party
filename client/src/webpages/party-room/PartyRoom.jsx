@@ -9,12 +9,23 @@ import { AddBox, PeopleOutlineTwoTone, VideoCameraBack } from '@mui/icons-materi
 import { ParticipantContext } from '../../context/ParticipantContext';
 import { useSocketContext } from '../../context/SocketContext';
 import { useNavigate } from 'react-router-dom';
+import useYoutubeUrlGetId from '../../hooks/useYoutubeUrlGetId';
+import { useConversationContext } from '../../context/ConversationContext';
+import useFetchAPi from '../../hooks/useFetchAPi';
 
 const PartyRoom = () => {
-
+    
     const { room , dispatch, participantList, currentVideoPlaying, name} = useContext(ParticipantContext);
+    const {videoID} = useYoutubeUrlGetId(currentVideoPlaying);
+    const {apiData} = useFetchAPi(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoID}&fields=items(id,snippet)&key=${process.env.REACT_APP_YOUTUBE_API_KEY}`);
+
     const socket = useSocketContext();
     const navigate = useNavigate();
+    const props = useConversationContext();
+    const { 
+        setChat
+    } = props.conversationProps;
+
 
     const [open, setOpen] = useState({
         nameModal: false,
@@ -48,7 +59,7 @@ const PartyRoom = () => {
 
         if(name === null) setOpen({...open, nameModal: true});
 
-    },[name])
+    },[name, open])
 
     useEffect(()=>{
 
@@ -75,7 +86,16 @@ const PartyRoom = () => {
     },[socket])
 
 
-    const handleLeaveRoom = () => navigate('/');
+
+    const handleLeaveRoom = () => {
+        sessionStorage.removeItem('youtube-watch-party-name');
+        sessionStorage.removeItem('youtube-watch-party-participants-in-room');
+        sessionStorage.removeItem('youtube-watch-party-current-video-playing');
+        sessionStorage.removeItem('youtube-watch-party-host');
+        sessionStorage.removeItem('youtube-watch-party-roomId');
+        setChat([]);
+        navigate('/');
+    }
 
     return(
         <Box id="party-room">
@@ -140,9 +160,12 @@ const PartyRoom = () => {
 
                     <VideoPlayer/>
 
+                    
                     <Box className="video-details">
-                        <h2 className="video-name">How To Train Your Dragon</h2>
+                        <h2 className="video-name">{apiData.title}</h2>
+                        <h2 className="video-channel">{ apiData.channelTitle}</h2>
                     </Box>
+
 
                     <Box className="cta-btn-wrapper">
                         <CTAButton 

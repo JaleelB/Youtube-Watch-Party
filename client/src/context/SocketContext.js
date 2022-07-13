@@ -13,7 +13,9 @@ export function SocketContextProvider({id, children}){
 
     //create a socket when page initialy loads or whenever host id changes
     useEffect(()=>{
-        const newSocket = io('http://localhost:4000', {query: {id} })
+        // const newSocket = io('http://localhost:4000', {query: {id} })
+        const newSocket = io('https://jaleelbdev-youtube-watch-party.herokuapp.com', {query: {id} })
+        
         // const newSocket = io.connect('http://localhost:4000')
         setSocket(newSocket);
 

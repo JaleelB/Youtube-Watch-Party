@@ -1,4 +1,3 @@
-const {generateRandomNumber} = require('./helper');
 const {formatSystemMessage} = require('./messageFormat');
 const rooms = {};
 
@@ -69,7 +68,7 @@ function removeParticipantFromRoom(roomID, id, io){
 
 function getRoomParticipants(roomID){
     if(rooms[roomID] && rooms[roomID].participants.length !== 0){
-        console.log("get Room Participants: ", rooms[roomID].participants)
+        // console.log("get Room Participants: ", rooms[roomID].participants)
         return rooms[roomID].participants;
     }
     return null;
@@ -83,13 +82,13 @@ function getRoom(roomID){
 
 function deleteRoom(roomID){
     if(roomID && rooms[roomID].participants.length === 0) delete rooms[roomID];
-    console.log("Delete Rooms update: ", rooms[roomID])
+    // console.log("Delete Rooms update: ", rooms[roomID])
 }
 
 function updateRoomVideoTimeStamp(roomID, timeStamp){
     if(rooms[roomID] && timeStamp){
         rooms[roomID].videoDetails.currentVideoTimestamp = timeStamp; 
-        console.log("Updated Video TimeStamp: ", timeStamp)  
+        // console.log("Updated Video TimeStamp: ", timeStamp)  
     }
 }
 
